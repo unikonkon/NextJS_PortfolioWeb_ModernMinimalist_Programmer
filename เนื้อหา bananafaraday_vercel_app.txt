@@ -1,0 +1,246 @@
+Hi, I amSuthep JantaweeFull Stack DeveloperI'm looking for a similar role as a
+Front-End Developer, Back-End Developer, or Full Stack Developer.I have 3+ years
+of experience in web development. I am passionate about building intuitive
+interfaces, exploring modern frameworks, and leveraging AI tools to enhance
+developer workflows.✔ Successfully initialized project✔ Installed: shadcn/ui✔
+Added magicui components✔ git push origin mainℹ Modified files:• lib/utils.ts
+
+Full Stack Developer
+
+I'm looking for a similar role as a Front-End Developer, Back-End Developer, or
+Full Stack Developer.
+
+I have 3+ years of experience in web development. I am passionate about building
+intuitive interfaces, exploring modern frameworks, and leveraging AI tools to
+enhance developer workflows.
+
+SkillsLanguagesHTML, CSS, JavaScript, TypeScript, Dart, SQL(Database)Frameworks
+& LibrariesReactJS, NextJS, Express.js, NestJS, Flutter, Electron, Tailwindcss,
+Ant Design, DaisyUI, Magicui, HeroUI, Three.jsTesting & API ToolsPostman, Jest,
+SonarQubeAI ToolsCursor, Claude Code, Blackbox.AI, Gemini, Google Gemini API,
+Chat GPT, v0.dev, lovable.devSkillsDevOps & CI/CD ToolsGit Version Control,
+Jenkins, Vercel, DockerDatabases & Data ToolsPostgreSQL, Kibana, Firebase,
+Prisma, SupabaseDesign & ToolsFigma, Draw.io (Diagrams.net), Slack, Lark,
+Monday, DiscordSoft SkillsCreativity, Critical thinking, Responsibility, Problem
+solving, Communication, Teamwork
+
+HTML, CSS, JavaScript, TypeScript, Dart, SQL(Database)
+
+Frameworks & Libraries
+
+ReactJS, NextJS, Express.js, NestJS, Flutter, Electron, Tailwindcss, Ant Design,
+DaisyUI, Magicui, HeroUI, Three.js
+
+Testing & API Tools
+
+Postman, Jest, SonarQube
+
+Cursor, Claude Code, Blackbox.AI, Gemini, Google Gemini API, Chat GPT, v0.dev,
+lovable.dev
+
+DevOps & CI/CD Tools
+
+Git Version Control, Jenkins, Vercel, Docker
+
+Databases & Data Tools
+
+PostgreSQL, Kibana, Firebase, Prisma, Supabase
+
+Figma, Draw.io (Diagrams.net), Slack, Lark, Monday, Discord
+
+Creativity, Critical thinking, Responsibility, Problem solving, Communication,
+Teamwork
+
+ExperienceMar 2022 - Dec 2022Feb 2023 - PresentVertobase Co., Ltd.Product:
+Zignway App, Role: Front-end DeveloperWrite front-end code from the design using
+React and Next.js.Write Flutter code from the design details for Zignway App,
+including the process for PIN login on mobile and other pages.iApp
+TechnologyRole: Full Stack DeveloperProject: NBTC - Drone Data Transmission,
+Role: Backend DeveloperDeveloped an API for transmitting drone data to both
+mobile and web platforms.Presented the API functionality to the client,
+explaining how the API works.Project: ACT, Role: Full Stack DeveloperUpdated the
+API for fetching data from the web and retrieving data from the Kibana
+database.Updated the front-end view to display data from MA and newly integrated
+database sources.Wrote Python logic for project risk assessment and Created
+Excel export functionality for project and company data.Redesigned the data
+fetching flow for three web pages: EGP, DBD, and GOV.Updated the API for
+fetching data from the three web pages (EGP, DBD, GOV) based on the previous
+version.Set up Jenkins processes to execute commands for fetching project and
+company data.Project: ACT Phase 2, Role: Full Stack DeveloperDesigned the
+workflow for fetching project and company data from three web pages: EGP, DBD,
+and GOV.Developed an API to fetch project data from these web pages and store it
+in the database.Set up a Jenkins process to automate commands for fetching
+project and company data.Developed the front-end web view for Phase 2.Product:
+iApp Speech Flow for Web, Role: Full Stack DeveloperPlanned the development and
+designed the workflow for iApp Speech Flow for Web.Converted mobile codebase
+into a web application using Next.js.Designed the code flow for iApp Speech Flow
+on the Web.Built the application as an Electron app targeting macOS and
+Windows.Project: iisi huboftalent, Role: Front-end DeveloperConnect the role
+data API from the signup process to display and edit the data in the view
+according to the design.Connect the API flow for liking profiles and viewing the
+data in the system according to the design.Project:
+digitaltouchpoint-wellness-chatbot, Role: Full Stack DeveloperWrite an API from
+Next.js to retrieve, add, delete, and edit data for the signup process and
+add/remove package pricing information.Write an authentication flow to protect
+users using JWT for login and viewing the user signup process.Create a dashboard
+bot view to display package and user information.
+
+Experience
+----------
+
+[Vertobase Co., Ltd.]
+
+Product: Zignway App, Role: Front-end Developer
+
+  - Write front-end code from the design using React and Next.js.
+  - Write Flutter code from the design details for Zignway App, including the process for PIN login on mobile and other pages.
+
+[iApp Technology]
+
+Role: Full Stack Developer
+
+  - Project: NBTC - Drone Data Transmission, Role: Backend Developer
+  - Developed an API for transmitting drone data to both mobile and web platforms.
+  - Presented the API functionality to the client, explaining how the API works.
+  - Project: ACT, Role: Full Stack Developer
+  - Updated the API for fetching data from the web and retrieving data from the Kibana database.
+  - Updated the front-end view to display data from MA and newly integrated database sources.
+  - Wrote Python logic for project risk assessment and Created Excel export functionality for project and company data.
+  - Redesigned the data fetching flow for three web pages: EGP, DBD, and GOV.
+  - Updated the API for fetching data from the three web pages (EGP, DBD, GOV) based on the previous version.
+  - Set up Jenkins processes to execute commands for fetching project and company data.
+  - Project: ACT Phase 2, Role: Full Stack Developer
+  - Designed the workflow for fetching project and company data from three web pages: EGP, DBD, and GOV.
+  - Developed an API to fetch project data from these web pages and store it in the database.
+  - Set up a Jenkins process to automate commands for fetching project and company data.
+  - Developed the front-end web view for Phase 2.
+  - Product: iApp Speech Flow for Web, Role: Full Stack Developer
+  - Planned the development and designed the workflow for iApp Speech Flow for Web.
+  - Converted mobile codebase into a web application using Next.js.
+  - Designed the code flow for iApp Speech Flow on the Web.
+  - Built the application as an Electron app targeting macOS and Windows.
+  - Project: iisi huboftalent, Role: Front-end Developer
+  - Connect the role data API from the signup process to display and edit the data in the view according to the design.
+  - Connect the API flow for liking profiles and viewing the data in the system according to the design.
+  - Project: digitaltouchpoint-wellness-chatbot, Role: Full Stack Developer
+  - Write an API from Next.js to retrieve, add, delete, and edit data for the signup process and add/remove package pricing information.
+  - Write an authentication flow to protect users using JWT for login and viewing the user signup process.
+  - Create a dashboard bot view to display package and user information.
+ProjectsExplore my journey through personal experiments and professional
+achievementsFeatured7 images💼 Job Matching AIFull Stack DeveloperAI-powered job
+matching application that helps job seekers find ideal roles by analyzing
+resumes and matching them with relevant job opportunities using RAG and vector
+search technology.Next.js 16TypeScriptGoogle Gemini Pro
+1.5RAGIndexedDBTailwindCSSNode.jsulixeehuggingface/transformersCodeNode Pull
+JobsDemoFeatured8 images📰 Crypto News AnalysisFull Stack DeveloperAI-powered
+crypto news aggregator with sentiment analysis and trending score using Google
+Gemini API. Real-time updates with RSS feeds from major crypto news
+sources.Next.jsTypeScriptSupabaseGoogle Gemini APITailwindCSSRSS
+ParserCodeDemoFeatured6 images🎵 WebRecord Sound AppFull Stack
+DeveloperBrowser-based audio recording with IndexedDB storage, Firebase auth,
+and privacy-first approach.ReactTypeScriptTailwindCSSIndexedDBCodeDemo8 images📋
+WEB Planning GeneratorFront-End DeveloperAI-powered website planning tool that
+generates project discovery documents and website flowcharts using Google Gemini
+API. Features 4-step wizard, export to PDF/Word, and Mermaid diagram
+generation.Next.js 15TypeScriptTailwindCSSGoogle Gemini
+APIMermaid.jsshadcn/uiIndexedDBCodeDemo12 images📰 Crypto Sentiment AnalysisFull
+Stack DeveloperAnalyze the sentiment of cryptocurrencies using AI Gemini API to
+make better investment decisions. updates with RSS feeds from major crypto news
+sources.Next.jsTypeScriptSupabaseGoogle Gemini
+APITailwindCSSNestJSThree.jsFrontendBackendDemo📈 CryptoTrackerFront-End
+DeveloperModern cryptocurrency tracking with categorized views, search
+functionality, and 7-day price
+charts.Next.jsTypeScriptTailwindCSSRechartsCodeDemo3 images🌐 HTML
+FetcherFront-End DeveloperWeb application for fetching and processing HTML
+content from URLs. Built with Next.js and TypeScript for efficient web scraping
+and content extraction.Next.jsTypeScriptTailwindCSSCodeDemo🎬 Netflix
+CloneFront-End DeveloperResponsive Netflix clone with modern UI/UX, movie
+browsing, and server-side rendering.Next.jsTypeScriptTailwindCSSCodeDemo🗣️
+Text-to-Speech AppFront-End DeveloperWeb application for text-to-speech
+conversion with voice selection and multi-language support.Next.jsTypeScriptWeb
+Speech APICodeDemo🇹🇭 PyThaiTTS AppFull Stack DeveloperFull-stack Thai
+text-to-speech with FastAPI backend and PyThaiTTS
+integration.Next.jsFastAPIPythonPyThaiTTSCode💼 Portfolio V1Front-End
+DeveloperClean and minimalist portfolio website with responsive design
+principles.Next.jsTypeScriptTailwindCSSThree.jsCodeDemo
+
+Projects
+--------
+
+Explore my journey through personal experiments and professional achievements
+
+[💼 Job Matching AI]
+
+AI-powered job matching application that helps job seekers find ideal roles by
+analyzing resumes and matching them with relevant job opportunities using RAG
+and vector search technology.
+
+[📰 Crypto News Analysis]
+
+AI-powered crypto news aggregator with sentiment analysis and trending score
+using Google Gemini API. Real-time updates with RSS feeds from major crypto news
+sources.
+
+[🎵 WebRecord Sound App]
+
+Browser-based audio recording with IndexedDB storage, Firebase auth, and
+privacy-first approach.
+
+[📋 WEB Planning Generator]
+
+Front-End Developer
+
+AI-powered website planning tool that generates project discovery documents and
+website flowcharts using Google Gemini API. Features 4-step wizard, export to
+PDF/Word, and Mermaid diagram generation.
+
+[📰 Crypto Sentiment Analysis]
+
+Analyze the sentiment of cryptocurrencies using AI Gemini API to make better
+investment decisions. updates with RSS feeds from major crypto news sources.
+
+[📈 CryptoTracker]
+
+Modern cryptocurrency tracking with categorized views, search functionality, and
+7-day price charts.
+
+[🌐 HTML Fetcher]
+
+Web application for fetching and processing HTML content from URLs. Built with
+Next.js and TypeScript for efficient web scraping and content extraction.
+
+[🎬 Netflix Clone]
+
+Responsive Netflix clone with modern UI/UX, movie browsing, and server-side
+rendering.
+
+[🗣️ Text-to-Speech App]
+
+Web application for text-to-speech conversion with voice selection and
+multi-language support.
+
+[🇹🇭 PyThaiTTS App]
+
+Full-stack Thai text-to-speech with FastAPI backend and PyThaiTTS integration.
+
+[💼 Portfolio V1]
+
+Clean and minimalist portfolio website with responsive design principles.
+
+Launch a Conversation with MeI am always excited to work on innovative projects
+and collaborate with like-minded individuals. Whether you have a specific
+project in mind or just want to discuss ideas, I love to hear from you.Connect
+With MeEmailbananammm0001@gmail.comPhone0901834036Follow My JourneySend Message
+to Space
+
+Launch a Conversation with Me
+
+I am always excited to work on innovative projects and collaborate with
+like-minded individuals. Whether you have a specific project in mind or just
+want to discuss ideas, I love to hear from you.
+
+[Connect With Me]
+
+[Follow My Journey]
+
+[Send Message to Space]

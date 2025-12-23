@@ -1,0 +1,438 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Terminal/Code Editor Color Palette */
+:root {
+  /* GitHub Dark Theme */
+  --terminal-black: #0d1117;
+  --editor-dark: #161b22;
+  --editor-border: #30363d;
+  --code-green: #00ff9f;
+  --syntax-blue: #58a6ff;
+  --syntax-purple: #bd93f9;
+  --syntax-orange: #ffab70;
+  --syntax-pink: #ff79c6;
+  --syntax-yellow: #f1fa8c;
+  --comment-gray: #8b949e;
+  --text-primary: #f0f6fc;
+  --text-secondary: #c9d1d9;
+
+  /* Fonts */
+  --font-mono: var(--font-fira-code), "Fira Code", "JetBrains Mono", Consolas, monospace;
+  --font-sans: var(--font-ibm-plex), "IBM Plex Sans", system-ui, sans-serif;
+
+  /* Theme variables */
+  --radius: 0.5rem;
+  --background: var(--terminal-black);
+  --foreground: var(--text-primary);
+  --card: var(--editor-dark);
+  --card-foreground: var(--text-primary);
+  --popover: var(--editor-dark);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--code-green);
+  --primary-foreground: var(--terminal-black);
+  --secondary: var(--editor-dark);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--editor-dark);
+  --muted-foreground: var(--comment-gray);
+  --accent: var(--syntax-purple);
+  --accent-foreground: var(--text-primary);
+  --destructive: #f85149;
+  --border: var(--editor-border);
+  --input: var(--editor-border);
+  --ring: var(--code-green);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-terminal-black: var(--terminal-black);
+  --color-editor-dark: var(--editor-dark);
+  --color-editor-border: var(--editor-border);
+  --color-code-green: var(--code-green);
+  --color-syntax-blue: var(--syntax-blue);
+  --color-syntax-purple: var(--syntax-purple);
+  --color-syntax-orange: var(--syntax-orange);
+  --color-syntax-pink: var(--syntax-pink);
+  --color-syntax-yellow: var(--syntax-yellow);
+  --color-comment-gray: var(--comment-gray);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --font-mono: var(--font-mono);
+  --font-sans: var(--font-sans);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-terminal-black text-text-primary font-sans;
+    font-feature-settings: "liga" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar - VS Code style */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--terminal-black);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--editor-border);
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--comment-gray);
+  }
+
+  /* Selection */
+  ::selection {
+    background: rgba(0, 255, 159, 0.3);
+    color: var(--text-primary);
+  }
+}
+
+/* Animations */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--code-green), 0 0 10px var(--code-green), 0 0 15px var(--code-green);
+  }
+  50% {
+    box-shadow: 0 0 10px var(--code-green), 0 0 20px var(--code-green), 0 0 30px var(--code-green);
+  }
+}
+
+@keyframes scan-line {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress {
+  from { width: 0; }
+  to { width: var(--progress-width, 100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-green {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Animation utilities */
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-progress {
+  animation: progress 1.5s ease-out forwards;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 159, 0.1), transparent);
+  background-size: 200% 100%;
+}
+
+/* Terminal window styling */
+.terminal-window {
+  background: var(--editor-dark);
+  border: 1px solid var(--editor-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.terminal-header {
+  background: var(--terminal-black);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--editor-border);
+}
+
+.terminal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.terminal-dot-red { background: #ff5f56; }
+.terminal-dot-yellow { background: #ffbd2e; }
+.terminal-dot-green { background: #27ca40; }
+
+.terminal-body {
+  padding: 20px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Syntax highlighting classes */
+.syntax-keyword { color: var(--syntax-purple); }
+.syntax-string { color: var(--syntax-yellow); }
+.syntax-number { color: var(--syntax-orange); }
+.syntax-function { color: var(--syntax-blue); }
+.syntax-comment { color: var(--comment-gray); font-style: italic; }
+.syntax-property { color: var(--syntax-pink); }
+.syntax-value { color: var(--code-green); }
+
+/* Line numbers */
+.line-numbers {
+  counter-reset: line;
+}
+
+.line-numbers > span {
+  display: block;
+  position: relative;
+  padding-left: 3em;
+}
+
+.line-numbers > span::before {
+  counter-increment: line;
+  content: counter(line);
+  position: absolute;
+  left: 0;
+  width: 2em;
+  text-align: right;
+  color: var(--comment-gray);
+  opacity: 0.5;
+  user-select: none;
+}
+
+/* GitHub-style repo card */
+.repo-card {
+  background: var(--editor-dark);
+  border: 1px solid var(--editor-border);
+  border-radius: 6px;
+  padding: 16px;
+  transition: all 0.3s ease;
+}
+
+.repo-card:hover {
+  border-color: var(--code-green);
+  box-shadow: 0 0 20px rgba(0, 255, 159, 0.1);
+}
+
+/* Language dots */
+.lang-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.lang-typescript { background: #3178c6; }
+.lang-javascript { background: #f7df1e; }
+.lang-python { background: #3776ab; }
+.lang-react { background: #61dafb; }
+.lang-nextjs { background: #ffffff; }
+.lang-flutter { background: #02569b; }
+
+/* Status bar styling */
+.status-bar {
+  background: var(--syntax-blue);
+  color: var(--terminal-black);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 4px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Cursor */
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.2em;
+  background: var(--code-green);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+}
+
+.cursor.blink {
+  animation: blink 1s step-end infinite;
+}
+
+/* Prompt */
+.prompt::before {
+  content: "$ ";
+  color: var(--code-green);
+}
+
+/* Tab styling */
+.editor-tab {
+  background: var(--terminal-black);
+  border: 1px solid var(--editor-border);
+  border-bottom: none;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--comment-gray);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.editor-tab.active {
+  background: var(--editor-dark);
+  color: var(--text-primary);
+  border-top: 2px solid var(--code-green);
+}
+
+.editor-tab:hover:not(.active) {
+  color: var(--text-primary);
+}
+
+/* Glitch effect */
+.glitch {
+  position: relative;
+}
+
+.glitch:hover {
+  animation: glitch 0.3s ease;
+}
+
+@keyframes glitch {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -2px); }
+  60% { transform: translate(-2px, -2px); }
+  80% { transform: translate(2px, 2px); }
+}
+
+/* Link hover effect */
+.link-underline {
+  position: relative;
+  text-decoration: none;
+}
+
+.link-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--code-green);
+  transition: width 0.3s ease;
+}
+
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Section divider */
+.section-comment {
+  color: var(--comment-gray);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  margin-bottom: 1rem;
+}
+
+.section-comment::before {
+  content: "// ";
+}
+
+/* Bracket decorations */
+.bracket-left::before {
+  content: "[ ";
+  color: var(--comment-gray);
+}
+
+.bracket-right::after {
+  content: " ]";
+  color: var(--comment-gray);
+}
+
+/* Grid background pattern */
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(48, 54, 61, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(48, 54, 61, 0.3) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Noise texture overlay */
+.noise-overlay {
+  position: relative;
+}
+
+.noise-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+}
