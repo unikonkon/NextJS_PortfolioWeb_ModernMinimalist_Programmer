@@ -1221,7 +1221,7 @@ function StatusBar() {
         </span>
         <span className="flex items-center gap-1">
           <span className="w-2 h-2 rounded-full bg-green-500" />
-          online
+          Designed by FaradayBanana.
         </span>
       </div>
       <div className="flex items-center gap-4">
@@ -1837,7 +1837,7 @@ export default function Portfolio() {
         </div>
         <div ref={heroRef} className="max-w-[950px] w-full relative z-10 mt-40">
           <TerminalWindow title="portfolio.dev - zsh" animate={true} className="hero-terminal">
-            <div ref={heroContentRef} className="flex flex-col lg:flex-row gap-6 relative sm:min-h-[390px] min-h-[310px]">
+            <div ref={heroContentRef} className="flex flex-col lg:flex-row gap-6 relative sm:min-h-[370px] min-h-[310px]">
               {/* Left Content */}
               <div className="space-y-4 flex-1">
                 <div className="hero-item">
@@ -1897,7 +1897,7 @@ export default function Portfolio() {
               </div>
 
               {/* Right - Card Swap */}
-              <div className="hidden lg:block relative w-auto h-[330px] mr-30">
+              <div className="hidden lg:block relative w-auto h-[310px] mr-30">
                 <CardSwap
                   width={350}
                   height={250}
@@ -1908,6 +1908,15 @@ export default function Portfolio() {
                   skewAmount={4}
                   easing="elastic"
                 >
+                  <Card className="overflow-hidden border-syntax-orange/30">
+                    <Image
+                      src="/project/JobMatching1.png"
+                      alt="Job Matching"
+                      fill
+                      className="object-cover"
+                      sizes="200px"
+                    />
+                  </Card>
                   <Card className="overflow-hidden border-code-green/30">
                     <Image
                       src="/image1.jpg"
@@ -1935,15 +1944,7 @@ export default function Portfolio() {
                       sizes="200px"
                     />
                   </Card>
-                  <Card className="overflow-hidden border-syntax-orange/30">
-                    <Image
-                      src="/project/JobMatching1.png"
-                      alt="Job Matching"
-                      fill
-                      className="object-cover"
-                      sizes="200px"
-                    />
-                  </Card>
+
                 </CardSwap>
               </div>
             </div>
