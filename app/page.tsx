@@ -21,13 +21,16 @@ import {
   Cpu,
   Globe,
   Sparkles,
-  Download
+  Download,
+  X,
+  ZoomIn
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
-import { personalProjects, workProjects, type PersonalProject, type WorkProject } from './projectSection'
+import { personalProjects, workProjects, type PersonalProject, type WorkProject } from './DATAprojectSection'
+import Stack from '@/components/Stack'
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -355,81 +358,166 @@ function CodeLine({ lineNum, children, indent = 0, className = "" }: {
 
 
 // ============================================
-// IMAGE SLIDER COMPONENT
+// IMAGE STACK MODAL COMPONENT
 // ============================================
 
-function ImageSlider({ images, title }: { images: string[]; title: string }) {
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const sliderRef = useRef<HTMLDivElement>(null)
+function ImageStackModal({
+  images,
+  title,
+  isOpen,
+  onClose
+}: {
+  images: string[];
+  title: string;
+  isOpen: boolean;
+  onClose: () => void
+}) {
+  const modalRef = useRef<HTMLDivElement>(null)
+  const backdropRef = useRef<HTMLDivElement>(null)
+  const contentRef = useRef<HTMLDivElement>(null)
 
-  const nextSlide = () => {
-    setCurrentIndex((prev) => (prev + 1) % images.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
-  }
-
+  // Handle keyboard navigation
   useEffect(() => {
-    if (!sliderRef.current) return
-    gsap.to(sliderRef.current, {
-      x: `-${currentIndex * 100}%`,
-      duration: 0.5,
-      ease: "power2.out"
-    })
-  }, [currentIndex])
+    if (!isOpen) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+    }
+  }, [isOpen, onClose])
+
+  // GSAP animation for modal open/close
+  useEffect(() => {
+    if (!modalRef.current || !backdropRef.current || !contentRef.current) return
+
+    if (isOpen) {
+      // Show modal
+      gsap.set(modalRef.current, { display: 'flex' })
+
+      // Animate backdrop
+      gsap.fromTo(backdropRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.3, ease: "power2.out" }
+      )
+
+      // Animate content
+      gsap.fromTo(contentRef.current,
+        { opacity: 0, scale: 0.8, y: 50 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "back.out(1.4)" }
+      )
+    } else {
+      // Animate out
+      gsap.to(backdropRef.current, {
+        opacity: 0,
+        duration: 0.2,
+        ease: "power2.in"
+      })
+
+      gsap.to(contentRef.current, {
+        opacity: 0,
+        scale: 0.9,
+        y: 30,
+        duration: 0.2,
+        ease: "power2.in",
+        onComplete: () => {
+          if (modalRef.current) {
+            gsap.set(modalRef.current, { display: 'none' })
+          }
+        }
+      })
+    }
+  }, [isOpen])
 
   if (images.length === 0) return null
 
+  // Create cards for Stack component
+  const stackCards = images.map((img, idx) => (
+    <div key={idx} className="w-full h-full bg-editor-dark rounded-2xl overflow-hidden border border-editor-border">
+      <Image
+        src={img}
+        alt={`${title} - ${idx + 1}`}
+        fill
+        className="object-contain p-2"
+        sizes="(max-width: 768px) 90vw, 600px"
+        priority={idx === 0}
+        draggable={false}
+      />
+    </div>
+  ))
+
   return (
-    <div className="relative overflow-hidden rounded-lg bg-terminal-black border border-editor-border">
-      <div className="relative aspect-video">
-        <div ref={sliderRef} className="flex" style={{ width: `${images.length * 100}%` }}>
-          {images.map((img, idx) => (
-            <div key={idx} className="relative w-full flex-shrink-0" style={{ width: `${100 / images.length}%` }}>
-              <Image
-                src={img}
-                alt={`${title} - ${idx + 1}`}
-                fill
-                className="object-contain"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+    <div
+      ref={modalRef}
+      className="fixed inset-0 z-50 hidden items-center justify-center p-4"
+      style={{ display: 'none' }}
+    >
+      {/* Backdrop */}
+      <div
+        ref={backdropRef}
+        className="absolute inset-0 bg-terminal-black/95 backdrop-blur-md"
+        onClick={onClose}
+      />
+
+      {/* Modal Content */}
+      <div
+        ref={contentRef}
+        className="relative flex flex-col gap-6 w-full max-w-5xl h-[96vh] items-center justify-center"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between w-full px-4">
+          <div className="flex items-center gap-3">
+            <div className="flex gap-1.5">
+              <div className="w-3 h-3 rounded-full bg-red-500/80" />
+              <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+              <div className="w-3 h-3 rounded-full bg-green-500/80" />
             </div>
-          ))}
+            <span className="font-mono text-sm text-text-primary">{title}</span>
+            <span className="font-mono text-xs text-syntax-purple px-2 py-0.5 bg-syntax-purple/10 rounded">
+              {images.length} images
+            </span>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-lg text-comment-gray hover:text-text-primary hover:bg-editor-border/50 transition-colors"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Stack Container */}
+        <div className="relative w-full aspect-video max-h-[95vh]">
+          <Stack
+            cards={stackCards}
+            randomRotation={false}
+            sensitivity={150}
+            sendToBackOnClick={true}
+            animationConfig={{ stiffness: 300, damping: 25 }}
+            mobileClickOnly={true}
+            mobileBreakpoint={768}
+          />
+        </div>
+
+        {/* Instructions */}
+        <div className="flex items-center gap-4 text-xs font-mono text-comment-gray/70">
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-1 bg-editor-border/30 rounded">Drag</span>
+            <span>or</span>
+            <span className="px-2 py-1 bg-editor-border/30 rounded">Click</span>
+            <span>to shuffle</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="px-2 py-1 bg-editor-border/30 rounded">ESC</span>
+            <span>to close</span>
+          </div>
         </div>
       </div>
-
-      {images.length > 1 && (
-        <>
-          {/* Navigation buttons */}
-          <button
-            onClick={prevSlide}
-            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-terminal-black/80 border border-editor-border text-text-secondary hover:text-code-green hover:border-code-green transition-colors flex items-center justify-center"
-          >
-            <ChevronRight className="w-4 h-4 rotate-180" />
-          </button>
-          <button
-            onClick={nextSlide}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-terminal-black/80 border border-editor-border text-text-secondary hover:text-code-green hover:border-code-green transition-colors flex items-center justify-center"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-
-          {/* Dots indicator */}
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-            {images.map((_, idx) => (
-              <button
-                key={idx}
-                onClick={() => setCurrentIndex(idx)}
-                className={cn(
-                  "w-2 h-2 rounded-full transition-colors",
-                  idx === currentIndex ? "bg-code-green" : "bg-editor-border hover:bg-comment-gray"
-                )}
-              />
-            ))}
-          </div>
-        </>
-      )}
     </div>
   )
 }
@@ -440,7 +528,7 @@ function ImageSlider({ images, title }: { images: string[]; title: string }) {
 
 function PersonalProjectCard({ project, index }: { project: PersonalProject; index: number }) {
   const cardRef = useRef<HTMLDivElement>(null)
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useGSAP(() => {
     if (!cardRef.current) return
@@ -472,23 +560,26 @@ function PersonalProjectCard({ project, index }: { project: PersonalProject; ind
     indigo: 'border-indigo-500/30 hover:border-indigo-500/60',
   }
 
+  const hasSlideImages = project.slideImages && project.slideImages.length > 0
+
   return (
-    <div
-      ref={cardRef}
-      className={cn(
-        "group p-4 bg-editor-dark/50 rounded-lg border transition-all duration-300",
-        colorMap[project.colorScheme] || 'border-editor-border',
-        project.featured && "ring-1 ring-code-green/20"
-      )}
-    >
-      {/* Image */}
-      <div className="mb-4">
-        {isExpanded && project.slideImages ? (
-          <ImageSlider images={project.slideImages} title={project.title} />
-        ) : (
+    <>
+      <div
+        ref={cardRef}
+        className={cn(
+          "group p-4 bg-editor-dark/50 rounded-lg border transition-all duration-300",
+          colorMap[project.colorScheme] || 'border-editor-border',
+          project.featured && "ring-1 ring-code-green/20"
+        )}
+      >
+        {/* Image */}
+        <div className="mb-4">
           <div
-            className="relative aspect-video rounded-lg overflow-hidden bg-terminal-black border border-editor-border cursor-pointer"
-            onClick={() => project.slideImages && setIsExpanded(true)}
+            className={cn(
+              "relative aspect-video rounded-lg overflow-hidden bg-terminal-black border border-editor-border",
+              hasSlideImages && "cursor-pointer"
+            )}
+            onClick={() => hasSlideImages && setIsModalOpen(true)}
           >
             <Image
               src={project.image}
@@ -497,85 +588,97 @@ function PersonalProjectCard({ project, index }: { project: PersonalProject; ind
               className="object-cover group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, 33vw"
             />
-            {project.slideImages && project.slideImages.length > 1 && (
-              <div className="absolute bottom-2 right-2 px-2 py-1 bg-terminal-black/80 rounded text-xs text-comment-gray">
-                +{project.slideImages.length - 1} images
+            {/* Hover overlay with zoom icon */}
+            {hasSlideImages && (
+              <div className="absolute inset-0 bg-terminal-black/0 group-hover:bg-terminal-black/60 transition-all duration-300 flex items-center justify-center">
+                <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center gap-2">
+                  <ZoomIn className="w-8 h-8 text-code-green" />
+                  <span className="text-xs font-mono text-code-green">
+                    View {project.slideImages!.length} images
+                  </span>
+                </div>
+              </div>
+            )}
+            {/* Image count badge */}
+            {hasSlideImages && project.slideImages!.length > 1 && (
+              <div className="absolute bottom-2 right-2 px-2 py-1 bg-terminal-black/80 rounded text-xs text-comment-gray group-hover:opacity-0 transition-opacity">
+                +{project.slideImages!.length - 1} images
               </div>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Header */}
-      <div className="flex items-start justify-between mb-2">
-        <div>
-          <h3 className="font-mono text-text-primary group-hover:text-code-green transition-colors text-lg">
-            {project.title}
-          </h3>
-          <span className="text-xs font-mono text-syntax-purple">{project.role}</span>
         </div>
-        {project.featured && (
-          <span className="px-2 py-0.5 text-xs font-mono bg-code-green/10 text-code-green rounded">
-            featured
-          </span>
-        )}
+
+        {/* Header */}
+        <div className="flex items-start justify-between mb-2">
+          <div>
+            <h3 className="font-mono text-text-primary group-hover:text-code-green transition-colors text-lg">
+              {project.title}
+            </h3>
+            <span className="text-xs font-mono text-syntax-purple">{project.role}</span>
+          </div>
+          {project.featured && (
+            <span className="px-2 py-0.5 text-xs font-mono bg-code-green/10 text-code-green rounded">
+              featured
+            </span>
+          )}
+        </div>
+
+        {/* Description */}
+        <p className="text-comment-gray text-sm mb-4 line-clamp-2">{project.description}</p>
+
+        {/* Technologies */}
+        <div className="flex flex-wrap gap-1.5 mb-4">
+          {project.technologies.slice(0, 5).map((tech, i) => (
+            <span key={i} className="px-2 py-0.5 text-xs font-mono bg-terminal-black text-comment-gray rounded border border-editor-border">
+              {tech}
+            </span>
+          ))}
+          {project.technologies.length > 5 && (
+            <span className="px-2 py-0.5 text-xs font-mono text-comment-gray">
+              +{project.technologies.length - 5}
+            </span>
+          )}
+        </div>
+
+        {/* Links */}
+        <div className="flex gap-2">
+          {project.githubUrl && (
+            <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
+              <Github className="w-3 h-3" /> Code
+            </a>
+          )}
+          {project.githubUrlFrontend && (
+            <a href={project.githubUrlFrontend} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
+              <Github className="w-3 h-3" /> FE
+            </a>
+          )}
+          {project.githubUrlBackend && (
+            <a href={project.githubUrlBackend} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
+              <Github className="w-3 h-3" /> BE
+            </a>
+          )}
+          {project.demoUrl && (
+            <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
+              className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-code-green/10 border border-code-green/30 rounded text-code-green hover:bg-code-green hover:text-terminal-black transition-colors">
+              <ExternalLink className="w-3 h-3" /> Demo
+            </a>
+          )}
+        </div>
       </div>
 
-      {/* Description */}
-      <p className="text-comment-gray text-sm mb-4 line-clamp-2">{project.description}</p>
-
-      {/* Technologies */}
-      <div className="flex flex-wrap gap-1.5 mb-4">
-        {project.technologies.slice(0, 5).map((tech, i) => (
-          <span key={i} className="px-2 py-0.5 text-xs font-mono bg-terminal-black text-comment-gray rounded border border-editor-border">
-            {tech}
-          </span>
-        ))}
-        {project.technologies.length > 5 && (
-          <span className="px-2 py-0.5 text-xs font-mono text-comment-gray">
-            +{project.technologies.length - 5}
-          </span>
-        )}
-      </div>
-
-      {/* Links */}
-      <div className="flex gap-2">
-        {project.githubUrl && (
-          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
-            <Github className="w-3 h-3" /> Code
-          </a>
-        )}
-        {project.githubUrlFrontend && (
-          <a href={project.githubUrlFrontend} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
-            <Github className="w-3 h-3" /> FE
-          </a>
-        )}
-        {project.githubUrlBackend && (
-          <a href={project.githubUrlBackend} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
-            <Github className="w-3 h-3" /> BE
-          </a>
-        )}
-        {project.demoUrl && (
-          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
-            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-code-green/10 border border-code-green/30 rounded text-code-green hover:bg-code-green hover:text-terminal-black transition-colors">
-            <ExternalLink className="w-3 h-3" /> Demo
-          </a>
-        )}
-      </div>
-
-      {/* Collapse button */}
-      {isExpanded && (
-        <button
-          onClick={() => setIsExpanded(false)}
-          className="mt-3 text-xs text-comment-gray hover:text-code-green transition-colors"
-        >
-          ← Collapse images
-        </button>
+      {/* Image Stack Modal */}
+      {hasSlideImages && (
+        <ImageStackModal
+          images={project.slideImages!}
+          title={project.title}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       )}
-    </div>
+    </>
   )
 }
 
