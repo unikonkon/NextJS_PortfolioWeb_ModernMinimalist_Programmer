@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useLayoutEffect } from 'react'
 import {
   Github,
   Linkedin,
@@ -10,7 +10,6 @@ import {
   Terminal as TerminalIcon,
   GitBranch,
   GitCommit,
-  Star,
   Code2,
   Briefcase,
   User,
@@ -21,26 +20,44 @@ import {
   Database,
   Cpu,
   Globe,
-  Sparkles
+  Sparkles,
+  Download
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import Image from 'next/image'
+import { personalProjects, workProjects, type PersonalProject, type WorkProject } from './projectSection'
+
+// Register GSAP plugins
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger)
+}
+
+// ============================================
+// GSAP ANIMATION HOOKS
+// ============================================
+
+function useGSAP(callback: (ctx: gsap.Context) => void, deps: React.DependencyList = []) {
+  const ctxRef = useRef<gsap.Context | null>(null)
+
+  useLayoutEffect(() => {
+    ctxRef.current = gsap.context(() => {
+      callback(ctxRef.current!)
+    })
+
+    return () => {
+      ctxRef.current?.revert()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
+
+  return ctxRef
+}
 
 // ============================================
 // TYPE DEFINITIONS
 // ============================================
-
-interface Project {
-  name: string
-  description: string
-  tech: string[]
-  language: string
-  languageColor: string
-  links: {
-    code?: string
-    demo?: string
-  }
-  featured?: boolean
-}
 
 interface Experience {
   company: string
@@ -71,7 +88,7 @@ const personalInfo = {
   email: "bananammm0001@gmail.com",
   phone: "0901834036",
   available: true,
-  github: "https://github.com/bananafaraday",
+  github: "https://github.com/unikonkon",
   linkedin: "https://linkedin.com/in/suthep-jantawee",
 }
 
@@ -83,8 +100,8 @@ const skillCategories: SkillCategory[] = [
       { name: "TypeScript", level: 90 },
       { name: "JavaScript", level: 95 },
       { name: "HTML/CSS", level: 90 },
-      { name: "Dart", level: 70 },
       { name: "SQL", level: 75 },
+      { name: "Dart", level: 65 },
       { name: "Python", level: 65 },
     ]
   },
@@ -106,7 +123,7 @@ const skillCategories: SkillCategory[] = [
     skills: [
       { name: "PostgreSQL", level: 85 },
       { name: "Firebase", level: 80 },
-      { name: "Supabase", level: 85 },
+      { name: "Supabase", level: 80 },
       { name: "Prisma", level: 80 },
       { name: "Kibana", level: 65 },
     ]
@@ -122,16 +139,52 @@ const skillCategories: SkillCategory[] = [
     ]
   },
   {
+    name: "Testing & API Tools",
+    icon: <span role="img" aria-label="Test Tubes">🧪</span>,
+    skills: [
+      { name: "Postman", level: 85 },
+      { name: "Jest", level: 80 },
+      { name: "SonarQube", level: 70 },
+    ]
+  },
+  {
+    name: "Design & Tools",
+    icon: <span role="img" aria-label="Palette">🎨</span>,
+    skills: [
+      { name: "Figma", level: 85 },
+      { name: "Draw.io (Diagrams.net)", level: 85 },
+      { name: "Discord", level: 85 },
+      { name: "Slack", level: 80 },
+      { name: "Lark", level: 80 },
+      { name: "Monday", level: 70 },
+    ]
+  },
+  {
     name: "AI Tools",
     icon: <Sparkles className="w-4 h-4" />,
     skills: [
+      { name: "Cursor", level: 90 },
+      { name: "Chat GPT", level: 85 },
       { name: "Claude Code", level: 90 },
-      { name: "Cursor", level: 85 },
-      { name: "Gemini API", level: 80 },
-      { name: "ChatGPT", level: 85 },
+      { name: "Blackbox.AI", level: 80 },
+      { name: "Gemini", level: 80 },
+      { name: "Google Gemini API", level: 80 },
       { name: "v0.dev", level: 75 },
+      { name: "lovable.dev", level: 70 },
     ]
   },
+  {
+    name: "Soft Skills",
+    icon: <span role="img" aria-label="Handshake">🤝</span>,
+    skills: [
+      { name: "Creativity", level: 90 },
+      { name: "Critical thinking", level: 85 },
+      { name: "Responsibility", level: 95 },
+      { name: "Problem solving", level: 90 },
+      { name: "Communication", level: 85 },
+      { name: "Teamwork", level: 90 },
+    ]
+  }
 ]
 
 const experiences: Experience[] = [
@@ -149,14 +202,25 @@ const experiences: Experience[] = [
         ]
       },
       {
-        name: "ACT & ACT Phase 2",
+        name: "ACT",
         role: "Full Stack Developer",
         tasks: [
-          "Updated API for data fetching from web and Kibana database",
-          "Wrote Python logic for project risk assessment",
-          "Created Excel export functionality",
-          "Redesigned data fetching flow for EGP, DBD, and GOV",
-          "Set up Jenkins processes for automation"
+          "Updated the API for fetching data from the web and retrieving data from the Kibana database.",
+          "Updated the front-end view to display data from MA and newly integrated database sources.",
+          "Wrote Python logic for project risk assessment and created Excel export functionality for project and company data.",
+          "Redesigned the data fetching flow for three web pages: EGP, DBD, and GOV.",
+          "Updated the API for fetching data from the three web pages (EGP, DBD, GOV) based on the previous version.",
+          "Set up Jenkins processes to execute commands for fetching project and company data."
+        ]
+      },
+      {
+        name: "ACT Phase 2",
+        role: "Full Stack Developer",
+        tasks: [
+          "Designed the workflow for fetching project and company data from three web pages: EGP, DBD, and GOV.",
+          "Developed an API to fetch project data from these web pages and store it in the database.",
+          "Set up a Jenkins process to automate commands for fetching project and company data.",
+          "Developed the front-end web view for Phase 2."
         ]
       },
       {
@@ -165,6 +229,14 @@ const experiences: Experience[] = [
         tasks: [
           "Converted mobile codebase to Next.js web application",
           "Built Electron app for macOS and Windows"
+        ]
+      },
+      {
+        name: "iisi huboftalent",
+        role: "Front-end Developer",
+        tasks: [
+          "Connect the role data API from the signup process to display and edit the data in the view according to the design.",
+          "Connect the API flow for liking profiles and viewing the data in the system according to the design."
         ]
       },
       {
@@ -195,76 +267,6 @@ const experiences: Experience[] = [
   }
 ]
 
-const projects: Project[] = [
-  {
-    name: "Job Matching AI",
-    description: "AI-powered job matching using RAG and vector search technology for analyzing resumes and matching with job opportunities.",
-    tech: ["Next.js", "TypeScript", "Google Gemini", "RAG", "IndexedDB"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { demo: "#" },
-    featured: true
-  },
-  {
-    name: "Crypto News Analysis",
-    description: "AI-powered crypto news aggregator with sentiment analysis and trending score using Google Gemini API.",
-    tech: ["Next.js", "Supabase", "Google Gemini API", "RSS Parser"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { code: "#", demo: "#" },
-    featured: true
-  },
-  {
-    name: "WebRecord Sound App",
-    description: "Browser-based audio recording with IndexedDB storage, Firebase auth, and privacy-first approach.",
-    tech: ["React", "TypeScript", "IndexedDB", "Firebase"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { code: "#", demo: "#" },
-    featured: true
-  },
-  {
-    name: "WEB Planning Generator",
-    description: "AI-powered website planning tool that generates project discovery documents and flowcharts.",
-    tech: ["Next.js 15", "Google Gemini API", "Mermaid.js", "shadcn/ui"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { code: "#", demo: "#" }
-  },
-  {
-    name: "Crypto Sentiment Analysis",
-    description: "Analyze cryptocurrency sentiment using AI Gemini API for better investment decisions.",
-    tech: ["Next.js", "NestJS", "Three.js", "Supabase"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { demo: "#" }
-  },
-  {
-    name: "CryptoTracker",
-    description: "Modern cryptocurrency tracking with categorized views, search, and 7-day price charts.",
-    tech: ["Next.js", "TypeScript", "Recharts", "Tailwind"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { code: "#", demo: "#" }
-  },
-  {
-    name: "HTML Fetcher",
-    description: "Web application for fetching and processing HTML content from URLs with syntax highlighting.",
-    tech: ["Next.js", "TypeScript", "Tailwind", "Prism.js"],
-    language: "TypeScript",
-    languageColor: "#3178c6",
-    links: { code: "#", demo: "#" }
-  },
-  {
-    name: "PyThaiTTS App",
-    description: "Full-stack Thai text-to-speech with FastAPI backend and PyThaiTTS integration.",
-    tech: ["Next.js", "FastAPI", "Python", "PyThaiTTS"],
-    language: "Python",
-    languageColor: "#3776ab",
-    links: { code: "#" }
-  }
-]
-
 const navItems = [
   { id: "about", label: "about.json", icon: <User className="w-4 h-4" /> },
   { id: "skills", label: "skills.ts", icon: <Code2 className="w-4 h-4" /> },
@@ -277,9 +279,52 @@ const navItems = [
 // COMPONENTS
 // ============================================
 
-function TerminalWindow({ children, title = "terminal" }: { children: React.ReactNode; title?: string }) {
+function TerminalWindow({
+  children,
+  title = "terminal",
+  className = "",
+  animate = false
+}: {
+  children: React.ReactNode;
+  title?: string;
+  className?: string;
+  animate?: boolean;
+}) {
+  const terminalRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    if (!animate || !terminalRef.current) return
+
+    // Initial state
+    gsap.set(terminalRef.current, {
+      opacity: 0,
+      y: 40,
+      scale: 0.95
+    })
+
+    // Animate in
+    gsap.to(terminalRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.8,
+      ease: "power3.out",
+      delay: 0.2
+    })
+
+    // // Floating effect
+    // gsap.to(terminalRef.current, {
+    //   y: -8,
+    //   duration: 3,
+    //   ease: "sine.inOut",
+    //   yoyo: true,
+    //   repeat: -1,
+    //   delay: 1
+    // })
+  }, [animate])
+
   return (
-    <div className="terminal-window shadow-2xl">
+    <div ref={terminalRef} className={cn("terminal-window shadow-2xl", className)}>
       <div className="terminal-header">
         <div className="terminal-dot terminal-dot-red" />
         <div className="terminal-dot terminal-dot-yellow" />
@@ -293,164 +338,550 @@ function TerminalWindow({ children, title = "terminal" }: { children: React.Reac
   )
 }
 
-function TypeWriter({ text, speed = 50, className = "", onComplete }: {
-  text: string;
-  speed?: number;
-  className?: string;
-  onComplete?: () => void;
-}) {
-  const [displayText, setDisplayText] = useState("")
-  const [isComplete, setIsComplete] = useState(false)
 
-  useEffect(() => {
-    let index = 0
-    const timer = setInterval(() => {
-      if (index < text.length) {
-        setDisplayText(text.slice(0, index + 1))
-        index++
-      } else {
-        clearInterval(timer)
-        setIsComplete(true)
-        onComplete?.()
-      }
-    }, speed)
-    return () => clearInterval(timer)
-  }, [text, speed, onComplete])
-
-  return (
-    <span className={className}>
-      {displayText}
-      <span className={cn("cursor", isComplete && "blink")} />
-    </span>
-  )
-}
-
-function CodeLine({ lineNum, children, indent = 0 }: {
+function CodeLine({ lineNum, children, indent = 0, className = "" }: {
   lineNum: number;
   children: React.ReactNode;
-  indent?: number
+  indent?: number;
+  className?: string;
 }) {
   return (
-    <div className="flex font-mono text-sm leading-relaxed">
+    <div className={cn("flex font-mono text-sm leading-relaxed", className)}>
       <span className="w-8 text-right pr-4 text-comment-gray/50 select-none">{lineNum}</span>
       <span style={{ paddingLeft: `${indent * 1.5}rem` }}>{children}</span>
     </div>
   )
 }
 
-function ProgressBar({
-  label,
-  progress,
-  delay = 0
-}: {
-  label: string;
-  progress: number;
-  delay?: number
-}) {
-  const [visible, setVisible] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+
+// ============================================
+// IMAGE SLIDER COMPONENT
+// ============================================
+
+function ImageSlider({ images, title }: { images: string[]; title: string }) {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % images.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)
+  }
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setTimeout(() => setVisible(true), delay)
-        }
-      },
-      { threshold: 0.5 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [delay])
+    if (!sliderRef.current) return
+    gsap.to(sliderRef.current, {
+      x: `-${currentIndex * 100}%`,
+      duration: 0.5,
+      ease: "power2.out"
+    })
+  }, [currentIndex])
+
+  if (images.length === 0) return null
 
   return (
-    <div ref={ref} className="group">
-      <div className="flex justify-between mb-1 font-mono text-sm">
-        <span className="text-text-secondary group-hover:text-code-green transition-colors">{label}</span>
-        <span className="text-comment-gray">{progress}%</span>
+    <div className="relative overflow-hidden rounded-lg bg-terminal-black border border-editor-border">
+      <div className="relative aspect-video">
+        <div ref={sliderRef} className="flex" style={{ width: `${images.length * 100}%` }}>
+          {images.map((img, idx) => (
+            <div key={idx} className="relative w-full flex-shrink-0" style={{ width: `${100 / images.length}%` }}>
+              <Image
+                src={img}
+                alt={`${title} - ${idx + 1}`}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            </div>
+          ))}
+        </div>
       </div>
-      <div className="h-2 bg-terminal-black rounded-full overflow-hidden border border-editor-border">
-        <div
-          className="h-full bg-gradient-to-r from-code-green to-syntax-blue rounded-full transition-all duration-1000 ease-out"
-          style={{
-            width: visible ? `${progress}%` : '0%',
-            boxShadow: visible ? '0 0 10px rgba(0, 255, 159, 0.5)' : 'none'
-          }}
-        />
-      </div>
+
+      {images.length > 1 && (
+        <>
+          {/* Navigation buttons */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-terminal-black/80 border border-editor-border text-text-secondary hover:text-code-green hover:border-code-green transition-colors flex items-center justify-center"
+          >
+            <ChevronRight className="w-4 h-4 rotate-180" />
+          </button>
+          <button
+            onClick={nextSlide}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-terminal-black/80 border border-editor-border text-text-secondary hover:text-code-green hover:border-code-green transition-colors flex items-center justify-center"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          {/* Dots indicator */}
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+            {images.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={cn(
+                  "w-2 h-2 rounded-full transition-colors",
+                  idx === currentIndex ? "bg-code-green" : "bg-editor-border hover:bg-comment-gray"
+                )}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </div>
   )
 }
 
-function ProjectCard({ project }: { project: Project }) {
+// ============================================
+// PERSONAL PROJECT CARD
+// ============================================
+
+function PersonalProjectCard({ project, index }: { project: PersonalProject; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  useGSAP(() => {
+    if (!cardRef.current) return
+
+    gsap.set(cardRef.current, { opacity: 0, y: 40 })
+
+    gsap.to(cardRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: index * 0.01,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: cardRef.current,
+        start: "top 90%",
+        toggleActions: "play none none none"
+      }
+    })
+  }, [index])
+
+  const colorMap: Record<string, string> = {
+    orange: 'border-orange-500/30 hover:border-orange-500/60',
+    orangeLight: 'border-orange-400/30 hover:border-orange-400/60',
+    blue: 'border-blue-500/30 hover:border-blue-500/60',
+    yellow: 'border-yellow-500/30 hover:border-yellow-500/60',
+    red: 'border-red-500/30 hover:border-red-500/60',
+    green: 'border-green-500/30 hover:border-green-500/60',
+    purple: 'border-purple-500/30 hover:border-purple-500/60',
+    indigo: 'border-indigo-500/30 hover:border-indigo-500/60',
+  }
+
   return (
-    <div className={cn(
-      "repo-card group cursor-pointer",
-      project.featured && "ring-1 ring-code-green/30"
-    )}>
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <FolderGit2 className="w-5 h-5 text-syntax-blue" />
-          <h3 className="font-mono text-text-primary group-hover:text-code-green transition-colors">
-            {project.name}
-          </h3>
-          {project.featured && (
-            <span className="px-2 py-0.5 text-xs font-mono bg-code-green/10 text-code-green rounded">
-              featured
-            </span>
-          )}
-        </div>
-        <div className="flex gap-2">
-          {project.links.code && (
-            <a href={project.links.code} className="text-comment-gray hover:text-code-green transition-colors">
-              <Code2 className="w-4 h-4" />
-            </a>
-          )}
-          {project.links.demo && (
-            <a href={project.links.demo} className="text-comment-gray hover:text-code-green transition-colors">
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          )}
-        </div>
+    <div
+      ref={cardRef}
+      className={cn(
+        "group p-4 bg-editor-dark/50 rounded-lg border transition-all duration-300",
+        colorMap[project.colorScheme] || 'border-editor-border',
+        project.featured && "ring-1 ring-code-green/20"
+      )}
+    >
+      {/* Image */}
+      <div className="mb-4">
+        {isExpanded && project.slideImages ? (
+          <ImageSlider images={project.slideImages} title={project.title} />
+        ) : (
+          <div
+            className="relative aspect-video rounded-lg overflow-hidden bg-terminal-black border border-editor-border cursor-pointer"
+            onClick={() => project.slideImages && setIsExpanded(true)}
+          >
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, 33vw"
+            />
+            {project.slideImages && project.slideImages.length > 1 && (
+              <div className="absolute bottom-2 right-2 px-2 py-1 bg-terminal-black/80 rounded text-xs text-comment-gray">
+                +{project.slideImages.length - 1} images
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
+      {/* Header */}
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <h3 className="font-mono text-text-primary group-hover:text-code-green transition-colors text-lg">
+            {project.title}
+          </h3>
+          <span className="text-xs font-mono text-syntax-purple">{project.role}</span>
+        </div>
+        {project.featured && (
+          <span className="px-2 py-0.5 text-xs font-mono bg-code-green/10 text-code-green rounded">
+            featured
+          </span>
+        )}
+      </div>
+
+      {/* Description */}
       <p className="text-comment-gray text-sm mb-4 line-clamp-2">{project.description}</p>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {project.tech.map((tech, i) => (
-          <span key={i} className="px-2 py-1 text-xs font-mono bg-terminal-black text-comment-gray rounded border border-editor-border">
+      {/* Technologies */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {project.technologies.slice(0, 5).map((tech, i) => (
+          <span key={i} className="px-2 py-0.5 text-xs font-mono bg-terminal-black text-comment-gray rounded border border-editor-border">
+            {tech}
+          </span>
+        ))}
+        {project.technologies.length > 5 && (
+          <span className="px-2 py-0.5 text-xs font-mono text-comment-gray">
+            +{project.technologies.length - 5}
+          </span>
+        )}
+      </div>
+
+      {/* Links */}
+      <div className="flex gap-2">
+        {project.githubUrl && (
+          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
+            <Github className="w-3 h-3" /> Code
+          </a>
+        )}
+        {project.githubUrlFrontend && (
+          <a href={project.githubUrlFrontend} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
+            <Github className="w-3 h-3" /> FE
+          </a>
+        )}
+        {project.githubUrlBackend && (
+          <a href={project.githubUrlBackend} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-terminal-black border border-editor-border rounded text-comment-gray hover:text-code-green hover:border-code-green transition-colors">
+            <Github className="w-3 h-3" /> BE
+          </a>
+        )}
+        {project.demoUrl && (
+          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-mono bg-code-green/10 border border-code-green/30 rounded text-code-green hover:bg-code-green hover:text-terminal-black transition-colors">
+            <ExternalLink className="w-3 h-3" /> Demo
+          </a>
+        )}
+      </div>
+
+      {/* Collapse button */}
+      {isExpanded && (
+        <button
+          onClick={() => setIsExpanded(false)}
+          className="mt-3 text-xs text-comment-gray hover:text-code-green transition-colors"
+        >
+          ← Collapse images
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ============================================
+// WORK PROJECT CARD
+// ============================================
+
+function WorkProjectCard({ project, index }: { project: WorkProject; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [showFeatures, setShowFeatures] = useState(false)
+
+  useGSAP(() => {
+    if (!cardRef.current) return
+
+    gsap.set(cardRef.current, { opacity: 0, y: 40 })
+
+    gsap.to(cardRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      delay: index * 0.01,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: cardRef.current,
+        start: "top 90%",
+        toggleActions: "play none none none"
+      }
+    })
+  }, [index])
+
+  const colorMap: Record<string, string> = {
+    orange: 'border-orange-500/30',
+    blue: 'border-blue-500/30',
+    yellow: 'border-yellow-500/30',
+    red: 'border-red-500/30',
+    green: 'border-green-500/30',
+    purple: 'border-purple-500/30',
+    indigo: 'border-indigo-500/30',
+  }
+
+  return (
+    <div
+      ref={cardRef}
+      className={cn(
+        "p-4 bg-editor-dark/50 rounded-lg border transition-all duration-300 hover:border-syntax-blue/50",
+        colorMap[project.colorScheme] || 'border-editor-border'
+      )}
+    >
+      {/* Header */}
+      <div className="flex items-start gap-3 mb-3">
+        <span className="text-2xl">{project.icon}</span>
+        <div className="flex-1">
+          <h3 className="font-mono text-text-primary text-lg">{project.title}</h3>
+          <span className="text-xs font-mono text-syntax-purple">{project.role}</span>
+        </div>
+        {project.demoUrl && (
+          <a href={project.demoUrl} target="_blank" rel="noopener noreferrer"
+            className="text-comment-gray hover:text-code-green transition-colors">
+            <ExternalLink className="w-4 h-4" />
+          </a>
+        )}
+      </div>
+
+      {/* Description */}
+      <p className="text-comment-gray text-sm mb-4">{project.description}</p>
+
+      {/* Technologies */}
+      <div className="flex flex-wrap gap-1.5 mb-4">
+        {project.technologies.map((tech, i) => (
+          <span key={i} className="px-2 py-0.5 text-xs font-mono bg-terminal-black text-comment-gray rounded border border-editor-border">
             {tech}
           </span>
         ))}
       </div>
 
-      <div className="flex items-center gap-4 text-xs text-comment-gray">
-        <div className="flex items-center gap-1">
-          <span
-            className="w-3 h-3 rounded-full"
-            style={{ backgroundColor: project.languageColor }}
-          />
-          <span>{project.language}</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <Star className="w-3 h-3" />
-          <span>--</span>
-        </div>
+      {/* Features toggle */}
+      <button
+        onClick={() => setShowFeatures(!showFeatures)}
+        className="flex items-center gap-1 text-xs font-mono text-syntax-blue hover:text-code-green transition-colors"
+      >
+        <ChevronRight className={cn("w-3 h-3 transition-transform", showFeatures && "rotate-90")} />
+        {showFeatures ? 'Hide' : 'Show'} features ({project.features.length})
+      </button>
+
+      {/* Features list */}
+      {showFeatures && (
+        <ul className="mt-3 space-y-1.5 pl-4 border-l-2 border-editor-border">
+          {project.features.map((feature, i) => (
+            <li key={i} className="text-xs text-comment-gray flex items-start gap-2">
+              <ChevronRight className="w-3 h-3 text-code-green shrink-0 mt-0.5" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+// ============================================
+// PROJECTS SECTION WITH TABS
+// ============================================
+
+type ProjectTab = 'personal' | 'work'
+type PersonalSubTab = 'all' | 'frontend' | 'fullstack'
+
+function ProjectsSection() {
+  const [activeTab, setActiveTab] = useState<ProjectTab>('personal')
+  const [personalSubTab, setPersonalSubTab] = useState<PersonalSubTab>('all')
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  // Filter personal projects by role
+  const filteredPersonalProjects = personalSubTab === 'all'
+    ? personalProjects
+    : personalProjects.filter(p =>
+      personalSubTab === 'frontend'
+        ? p.role.toLowerCase().includes('front-end') || p.role.toLowerCase().includes('frontend')
+        : p.role.toLowerCase().includes('full stack') || p.role.toLowerCase().includes('fullstack')
+    )
+
+  useGSAP(() => {
+    if (!sectionRef.current) return
+
+    const tabs = sectionRef.current.querySelectorAll('.project-tab')
+    gsap.set(tabs, { opacity: 0, y: -10 })
+    gsap.to(tabs, {
+      opacity: 1,
+      y: 0,
+      duration: 0.4,
+      stagger: 0.05,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: "top 80%",
+        toggleActions: "play none none none"
+      }
+    })
+  }, [])
+
+  return (
+    <div ref={sectionRef}>
+      {/* Main Tabs */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => setActiveTab('personal')}
+          className={cn(
+            "project-tab px-4 py-2 font-mono text-sm rounded-t border-b-2 transition-colors",
+            activeTab === 'personal'
+              ? "bg-editor-dark text-code-green border-code-green"
+              : "bg-transparent text-comment-gray border-transparent hover:text-text-secondary"
+          )}
+        >
+          <FolderGit2 className="w-4 h-4 inline mr-2" />
+          Personal Projects ({personalProjects.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('work')}
+          className={cn(
+            "project-tab px-4 py-2 font-mono text-sm rounded-t border-b-2 transition-colors",
+            activeTab === 'work'
+              ? "bg-editor-dark text-syntax-blue border-syntax-blue"
+              : "bg-transparent text-comment-gray border-transparent hover:text-text-secondary"
+          )}
+        >
+          <Briefcase className="w-4 h-4 inline mr-2" />
+          Work Projects ({workProjects.length})
+        </button>
       </div>
+
+      {/* Personal Projects */}
+      {activeTab === 'personal' && (
+        <div>
+          {/* Sub-tabs */}
+          <div className="flex gap-1 mb-6 p-1 bg-terminal-black rounded-lg border border-editor-border w-fit">
+            {[
+              { key: 'all', label: 'All' },
+              { key: 'frontend', label: 'Front-End' },
+              { key: 'fullstack', label: 'Full Stack' }
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setPersonalSubTab(tab.key as PersonalSubTab)}
+                className={cn(
+                  "px-3 py-1.5 font-mono text-xs rounded transition-colors",
+                  personalSubTab === tab.key
+                    ? "bg-code-green/20 text-code-green"
+                    : "text-comment-gray hover:text-text-secondary"
+                )}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Projects grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredPersonalProjects.map((project, index) => (
+              <PersonalProjectCard key={project.title} project={project} index={index} />
+            ))}
+          </div>
+
+          {filteredPersonalProjects.length === 0 && (
+            <div className="text-center py-12 text-comment-gray font-mono">
+              No projects found in this category
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Work Projects */}
+      {activeTab === 'work' && (
+        <div className="grid md:grid-cols-2 gap-4">
+          {workProjects.map((project, index) => (
+            <WorkProjectCard key={project.title} project={project} index={index} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 function GitTimeline({ experiences }: { experiences: Experience[] }) {
+  const timelineRef = useRef<HTMLDivElement>(null)
+  const lineRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    if (!timelineRef.current || !lineRef.current) return
+
+    // Animate the branch line drawing
+    gsap.set(lineRef.current, { scaleY: 0, transformOrigin: "top" })
+
+    gsap.to(lineRef.current, {
+      scaleY: 1,
+      duration: 1.5,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: timelineRef.current,
+        start: "top 80%",
+        toggleActions: "play none none none"
+      }
+    })
+
+    // Animate company headers
+    const companyHeaders = timelineRef.current.querySelectorAll('.company-header')
+    companyHeaders.forEach((header, i) => {
+      gsap.set(header, { opacity: 0, x: -30 })
+      gsap.to(header, {
+        opacity: 1,
+        x: 0,
+        duration: 0.6,
+        delay: i * 0.3,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: header,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      })
+    })
+
+    // Animate commit cards
+    const commitCards = timelineRef.current.querySelectorAll('.commit-card')
+    commitCards.forEach((card, i) => {
+      gsap.set(card, { opacity: 0, y: 30, x: -20 })
+      gsap.to(card, {
+        opacity: 1,
+        y: 0,
+        x: 0,
+        duration: 0.5,
+        delay: 0.1 * i,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: card,
+          start: "top 90%",
+          toggleActions: "play none none none"
+        }
+      })
+    })
+
+    // Animate commit dots
+    const commitDots = timelineRef.current.querySelectorAll('.commit-dot')
+    commitDots.forEach((dot, i) => {
+      gsap.set(dot, { scale: 0 })
+      gsap.to(dot, {
+        scale: 1,
+        duration: 0.4,
+        delay: 0.1 * i + 0.2,
+        ease: "back.out(2)",
+        scrollTrigger: {
+          trigger: dot,
+          start: "top 90%",
+          toggleActions: "play none none none"
+        }
+      })
+    })
+  }, [])
+
   return (
-    <div className="relative">
+    <div ref={timelineRef} className="relative">
       {/* Git branch line */}
-      <div className="absolute left-[19px] top-0 bottom-0 w-0.5 bg-editor-border" />
+      <div ref={lineRef} className="absolute left-[19px] top-0 bottom-0 w-0.5 bg-editor-border" />
 
       {experiences.map((exp, expIndex) => (
         <div key={expIndex} className="relative mb-8 last:mb-0">
           {/* Company header - main branch */}
-          <div className="flex items-start gap-4 mb-4">
+          <div className="company-header flex items-start gap-4 mb-4">
             <div className="relative z-10 w-10 h-10 rounded-full bg-code-green/20 border-2 border-code-green flex items-center justify-center">
               <GitBranch className="w-5 h-5 text-code-green" />
             </div>
@@ -468,9 +899,9 @@ function GitTimeline({ experiences }: { experiences: Experience[] }) {
           {/* Projects as commits */}
           <div className="ml-5 pl-9 border-l-2 border-editor-border space-y-4">
             {exp.projects.map((project, projIndex) => (
-              <div key={projIndex} className="relative group">
+              <div key={projIndex} className="commit-card relative group">
                 {/* Commit dot */}
-                <div className="absolute -left-[25px] top-1.5 w-3 h-3 rounded-full bg-syntax-blue group-hover:bg-code-green transition-colors" />
+                <div className="commit-dot absolute -left-[25px] top-1.5 w-3 h-3 rounded-full bg-syntax-blue group-hover:bg-code-green transition-colors" />
 
                 <div className="p-4 bg-editor-dark/50 rounded-lg border border-editor-border hover:border-syntax-blue/50 transition-colors">
                   <div className="flex items-center gap-2 mb-2">
@@ -503,27 +934,92 @@ function ContactForm() {
     message: ""
   })
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle")
+  const formRef = useRef<HTMLFormElement>(null)
+
+  useGSAP(() => {
+    if (!formRef.current) return
+
+    const codeLines = formRef.current.querySelectorAll('.code-line-anim')
+
+    gsap.set(codeLines, { opacity: 0, x: -30 })
+
+    codeLines.forEach((line, i) => {
+      gsap.to(line, {
+        opacity: 1,
+        x: 0,
+        duration: 0.5,
+        delay: i * 0.08,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        }
+      })
+    })
+
+    // Animate the submit button
+    const submitBtn = formRef.current.querySelector('.submit-btn')
+    if (submitBtn) {
+      gsap.set(submitBtn, { opacity: 0, y: 20 })
+      gsap.to(submitBtn, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        delay: 0.8,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: formRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        }
+      })
+    }
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    const { name, email, message } = formState
+
+    // Validate form
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      return
+    }
+
     setStatus("sending")
+
+    // Create mailto link with form data
+    const recipientEmail = "bananammm0001@gmail.com"
+    const subject = encodeURIComponent(`Contact from ${name}`)
+    const body = encodeURIComponent(
+      `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`
+    )
+
+    const mailtoLink = `mailto:${recipientEmail}?subject=${subject}&body=${body}`
+
+    // Open email client
+    window.location.href = mailtoLink
+
+    // Update status
     setTimeout(() => {
       setStatus("sent")
+      setFormState({ name: "", email: "", message: "" })
       setTimeout(() => setStatus("idle"), 3000)
-    }, 1500)
+    }, 500)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
       <div className="font-mono text-sm space-y-3">
-        <CodeLine lineNum={1}>
+        <CodeLine lineNum={1} className="code-line-anim">
           <span className="syntax-keyword">const</span>
           <span className="text-text-primary ml-2">message</span>
           <span className="text-text-primary ml-2">=</span>
           <span className="syntax-punctuation ml-2">{"{"}</span>
         </CodeLine>
 
-        <CodeLine lineNum={2} indent={1}>
+        <CodeLine lineNum={2} indent={1} className="code-line-anim">
           <span className="syntax-property">name:</span>
           <input
             type="text"
@@ -535,7 +1031,7 @@ function ContactForm() {
           <span className="syntax-punctuation">,</span>
         </CodeLine>
 
-        <CodeLine lineNum={3} indent={1}>
+        <CodeLine lineNum={3} indent={1} className="code-line-anim">
           <span className="syntax-property">email:</span>
           <input
             type="email"
@@ -547,33 +1043,33 @@ function ContactForm() {
           <span className="syntax-punctuation">,</span>
         </CodeLine>
 
-        <CodeLine lineNum={4} indent={1}>
+        <CodeLine lineNum={4} indent={1} className="code-line-anim">
           <span className="syntax-property">message:</span>
           <span className="syntax-punctuation ml-2">`</span>
         </CodeLine>
 
-        <CodeLine lineNum={5} indent={2}>
+        <CodeLine lineNum={5} indent={2} className="code-line-anim">
           <textarea
             value={formState.message}
             onChange={(e) => setFormState(s => ({ ...s, message: e.target.value }))}
-            rows={3}
-            className="w-full bg-terminal-black/50 border border-editor-border rounded text-syntax-yellow focus:border-code-green outline-none p-3 resize-none"
+            rows={8}
+            className="w-[330px] bg-terminal-black/50 border border-editor-border rounded text-syntax-yellow focus:border-code-green outline-none p-3 resize-none"
             placeholder="Your message here..."
           />
         </CodeLine>
 
-        <CodeLine lineNum={6} indent={1}>
+        <CodeLine lineNum={6} indent={1} className="code-line-anim">
           <span className="syntax-punctuation">`</span>
         </CodeLine>
 
-        <CodeLine lineNum={7}>
+        <CodeLine lineNum={7} className="code-line-anim">
           <span className="syntax-punctuation">{"}"}</span>
           <span className="syntax-punctuation">;</span>
         </CodeLine>
 
-        <CodeLine lineNum={8}>&nbsp;</CodeLine>
+        <CodeLine lineNum={8} className="code-line-anim">&nbsp;</CodeLine>
 
-        <CodeLine lineNum={9}>
+        <CodeLine lineNum={9} className="code-line-anim">
           <span className="syntax-keyword">await</span>
           <span className="syntax-function ml-2">sendMessage</span>
           <span className="syntax-punctuation">(</span>
@@ -588,7 +1084,7 @@ function ContactForm() {
         type="submit"
         disabled={status !== "idle"}
         className={cn(
-          "mt-6 w-full py-3 px-6 font-mono text-sm rounded border transition-all duration-300",
+          "submit-btn mt-6 w-full py-3 px-6 font-mono text-sm rounded border transition-all duration-300",
           status === "idle" && "bg-code-green/10 border-code-green text-code-green hover:bg-code-green hover:text-terminal-black",
           status === "sending" && "bg-syntax-blue/10 border-syntax-blue text-syntax-blue",
           status === "sent" && "bg-code-green/20 border-code-green text-code-green"
@@ -625,7 +1121,7 @@ function StatusBar() {
       <div className="flex items-center gap-4">
         <span>UTF-8</span>
         <span>LF</span>
-        <span>TypeScript React</span>
+        <span>Next.js</span>
         <span>{time.toLocaleTimeString('en-US', { hour12: false })}</span>
       </div>
     </footer>
@@ -694,32 +1190,398 @@ function Navigation() {
 }
 
 // ============================================
+// SKILL TAG COMPONENT
+// ============================================
+
+function SkillTag({ name, level, delay }: { name: string; level: number; delay: number }) {
+  const tagRef = useRef<HTMLDivElement>(null)
+
+  // Determine skill level indicator
+  const getLevelIndicator = (level: number) => {
+    if (level >= 85) return { dots: 3, color: 'text-code-green', label: 'advanced' }
+    if (level >= 70) return { dots: 2, color: 'text-syntax-blue', label: 'intermediate' }
+    return { dots: 1, color: 'text-syntax-orange', label: 'familiar' }
+  }
+
+  const levelInfo = getLevelIndicator(level)
+
+  useGSAP(() => {
+    if (!tagRef.current) return
+
+    gsap.set(tagRef.current, { opacity: 0, scale: 0.8, y: 10 })
+
+    gsap.to(tagRef.current, {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      duration: 0.4,
+      delay: delay / 1000,
+      ease: "back.out(1.5)",
+      scrollTrigger: {
+        trigger: tagRef.current,
+        start: "top 90%",
+        toggleActions: "play none none none"
+      }
+    })
+  }, [delay])
+
+  return (
+    <div
+      ref={tagRef}
+      className="group relative inline-flex items-center gap-2 px-3 py-1.5 bg-terminal-black/80 border border-editor-border rounded-md font-mono text-sm hover:border-code-green/50 hover:bg-code-green/5 transition-all duration-200 cursor-default"
+    >
+      {/* Skill name */}
+      <span className="text-text-secondary group-hover:text-code-green transition-colors">
+        {name}
+      </span>
+
+      {/* Level dots indicator */}
+      <div className="flex gap-0.5">
+        {[1, 2, 3].map((dot) => (
+          <span
+            key={dot}
+            className={cn(
+              "w-1.5 h-1.5 rounded-full transition-colors",
+              dot <= levelInfo.dots
+                ? levelInfo.color === 'text-code-green'
+                  ? "bg-code-green"
+                  : levelInfo.color === 'text-syntax-blue'
+                    ? "bg-syntax-blue"
+                    : "bg-syntax-orange"
+                : "bg-editor-border"
+            )}
+          />
+        ))}
+      </div>
+
+      {/* Tooltip on hover */}
+      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-editor-dark border border-editor-border rounded text-xs text-comment-gray opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+        {levelInfo.label}
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// SKILL CATEGORY WITH ANIMATIONS
+// ============================================
+
+function SkillCategoryCard({ category, index }: { category: SkillCategory; index: number }) {
+  const categoryRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    if (!categoryRef.current) return
+
+    // Animate category card
+    gsap.set(categoryRef.current, { opacity: 0, y: 30 })
+    gsap.to(categoryRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      delay: index * 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: categoryRef.current,
+        start: "top 85%",
+        toggleActions: "play none none none"
+      }
+    })
+  }, [index])
+
+  return (
+    <div ref={categoryRef} className="p-4 bg-editor-dark/50 rounded-lg border border-editor-border hover:border-syntax-blue/30 transition-colors">
+      {/* Category header - styled like a file path */}
+      <div className="flex items-center gap-2 mb-4 pb-2 border-b border-editor-border">
+        <span className="text-syntax-blue">{category.icon}</span>
+        <span className="font-mono text-sm text-comment-gray">~/</span>
+        <span className="font-mono text-sm text-code-green">{category.name.toLowerCase()}</span>
+      </div>
+
+      {/* Skills as tags */}
+      <div className="flex flex-wrap gap-2">
+        {category.skills.map((skill, skillIndex) => (
+          <SkillTag
+            key={skillIndex}
+            name={skill.name}
+            level={skill.level}
+            delay={index * 150 + skillIndex * 80}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// ABOUT CONTENT WITH ANIMATIONS
+// ============================================
+
+function AboutContent() {
+  const contentRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    if (!contentRef.current) return
+
+    // Animate paragraphs
+    const paragraphs = contentRef.current.querySelectorAll('p')
+    paragraphs.forEach((p, i) => {
+      gsap.set(p, { opacity: 0, y: 30 })
+      gsap.to(p, {
+        opacity: 1,
+        y: 0,
+        duration: 0.6,
+        delay: i * 0.2,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: p,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      })
+    })
+
+    // Animate stats cards with counter
+    if (statsRef.current) {
+      const statCards = statsRef.current.querySelectorAll('.stat-card')
+      statCards.forEach((card, i) => {
+        gsap.set(card, { opacity: 0, y: 40, scale: 0.9 })
+        gsap.to(card, {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.6,
+          delay: 0.3 + i * 0.15,
+          ease: "back.out(1.2)",
+          scrollTrigger: {
+            trigger: statsRef.current,
+            start: "top 85%",
+            toggleActions: "play none none none"
+          }
+        })
+
+        // Counter animation for numbers
+        const numberEl = card.querySelector('.stat-number')
+        if (numberEl) {
+          const targetText = numberEl.textContent || '0'
+          const targetNumber = parseInt(targetText.replace('+', ''))
+          const counter = { value: 0 }
+
+          gsap.to(counter, {
+            value: targetNumber,
+            duration: 1.5,
+            delay: 0.5 + i * 0.15,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: statsRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none"
+            },
+            onUpdate: () => {
+              numberEl.textContent = `${Math.round(counter.value)}+`
+            }
+          })
+        }
+      })
+    }
+  }, [])
+
+  return (
+    <div ref={contentRef} className="space-y-6">
+      <p className="text-text-secondary leading-relaxed">
+        I&apos;m a passionate Full Stack Developer with 3+ years of experience building
+        web applications. I specialize in creating intuitive interfaces and robust
+        backend systems using modern technologies.
+      </p>
+      <p className="text-text-secondary leading-relaxed">
+        Currently exploring the intersection of AI and web development, leveraging
+        tools like Google Gemini API, Claude Code, and other AI assistants to
+        enhance developer productivity and create innovative solutions.
+      </p>
+
+      <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4">
+        <div className="stat-card p-4 bg-editor-dark rounded-lg border border-editor-border" data-target="3">
+          <div className="stat-number text-3xl font-bold text-code-green">3+</div>
+          <div className="text-sm text-comment-gray">Years Experience</div>
+        </div>
+        <div className="stat-card p-4 bg-editor-dark rounded-lg border border-editor-border" data-target="10">
+          <div className="stat-number text-3xl font-bold text-syntax-blue">10+</div>
+          <div className="text-sm text-comment-gray">Projects Completed</div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// CONTACT AVAILABILITY WITH ANIMATIONS
+// ============================================
+
+function ContactAvailability() {
+  const availRef = useRef<HTMLDivElement>(null)
+
+  useGSAP(() => {
+    if (!availRef.current) return
+
+    gsap.set(availRef.current, { opacity: 0, y: 30, scale: 0.95 })
+
+    gsap.to(availRef.current, {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      duration: 0.6,
+      ease: "back.out(1.2)",
+      scrollTrigger: {
+        trigger: availRef.current,
+        start: "top 90%",
+        toggleActions: "play none none none"
+      }
+    })
+
+    // Pulse animation for the dot
+    const dot = availRef.current.querySelector('.availability-dot')
+    if (dot) {
+      gsap.to(dot, {
+        scale: 1.3,
+        opacity: 0.6,
+        duration: 1,
+        ease: "sine.inOut",
+        yoyo: true,
+        repeat: -1
+      })
+    }
+  }, [])
+
+  return (
+    <div ref={availRef} className="p-4 bg-editor-dark rounded-lg border border-code-green/30">
+      <div className="flex items-center gap-2 text-code-green font-mono text-sm mb-2">
+        <span className="availability-dot w-2 h-2 rounded-full bg-code-green" />
+        Available for opportunities
+      </div>
+      <p className="text-comment-gray text-sm">
+        I&apos;m currently open to new opportunities as a Front-End, Back-End, or Full Stack Developer.
+      </p>
+    </div>
+  )
+}
+
+// ============================================
+// ANIMATED SECTION WRAPPER
+// ============================================
+
+function AnimatedSection({
+  children,
+  id,
+  className = ""
+}: {
+  children: React.ReactNode;
+  id?: string;
+  className?: string;
+}) {
+  const sectionRef = useRef<HTMLElement>(null)
+
+  useGSAP(() => {
+    if (!sectionRef.current) return
+
+    // Animate section comment headers
+    const sectionComment = sectionRef.current.querySelector('.section-comment')
+    if (sectionComment) {
+      gsap.set(sectionComment, { opacity: 0, x: -50 })
+      gsap.to(sectionComment, {
+        opacity: 1,
+        x: 0,
+        duration: 0.6,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none none"
+        }
+      })
+    }
+
+    // Animate terminal windows in this section
+    const terminals = sectionRef.current.querySelectorAll('.terminal-window:not(.hero-terminal)')
+    terminals.forEach((terminal, i) => {
+      gsap.set(terminal, { opacity: 0, y: 40 })
+      gsap.to(terminal, {
+        opacity: 1,
+        y: 0,
+        duration: 0.7,
+        delay: i * 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: terminal,
+          start: "top 85%",
+          toggleActions: "play none none none"
+        }
+      })
+    })
+  }, [])
+
+  return (
+    <section ref={sectionRef} id={id} className={className}>
+      {children}
+    </section>
+  )
+}
+
+// ============================================
 // MAIN PAGE
 // ============================================
 
 export default function Portfolio() {
-  const [heroComplete, setHeroComplete] = useState(false)
+  const heroRef = useRef<HTMLDivElement>(null)
+  const heroContentRef = useRef<HTMLDivElement>(null)
+
+  // Hero section animations
+  useGSAP(() => {
+    if (!heroContentRef.current) return
+
+    const heroItems = heroContentRef.current.querySelectorAll('.hero-item')
+
+    // Staggered reveal for hero content
+    gsap.set(heroItems, { opacity: 0, y: 20 })
+    gsap.to(heroItems, {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      stagger: 0.15,
+      ease: "power2.out",
+      delay: 0.8
+    })
+
+    // Parallax effect on scroll
+    gsap.to(heroRef.current, {
+      y: 100,
+      ease: "none",
+      scrollTrigger: {
+        trigger: heroRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: 1
+      }
+    })
+  }, [])
+
 
   return (
     <div className="min-h-screen bg-terminal-black noise-overlay">
       <Navigation />
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 pt-12 grid-pattern">
-        <div className="max-w-4xl w-full">
-          <TerminalWindow title="portfolio.dev - zsh">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-comment-gray">
-                <span>Last login: {new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
-              </div>
+      <section className="min-h-screen flex items-center justify-center px-4 grid-pattern overflow-hidden">
+        <div ref={heroRef} className="max-w-4xl w-full">
+          <TerminalWindow title="portfolio.dev - zsh" animate={true} className="hero-terminal">
+            <div ref={heroContentRef} className="space-y-4">
 
-              <div>
+              <div className="hero-item">
                 <span className="text-code-green">$</span>
                 <span className="ml-2 text-text-primary">cat about.json</span>
               </div>
 
-              <div className="pl-4 border-l-2 border-editor-border">
-                <pre className="text-sm">
+              <div className="hero-item pl-4 border-l-2 border-editor-border">
+                <pre className="text-lg">
                   <span className="syntax-punctuation">{"{"}</span>{"\n"}
                   <span className="syntax-property ml-4">&quot;name&quot;</span>
                   <span className="syntax-punctuation">: </span>
@@ -733,57 +1595,82 @@ export default function Portfolio() {
                   <span className="syntax-punctuation">: </span>
                   <span className="syntax-string">&quot;{personalInfo.experience}&quot;</span>
                   <span className="syntax-punctuation">,</span>{"\n"}
-                  <span className="syntax-property ml-4">&quot;location&quot;</span>
+                  {/* <span className="syntax-property ml-4">&quot;location&quot;</span>
                   <span className="syntax-punctuation">: </span>
                   <span className="syntax-string">&quot;{personalInfo.location}&quot;</span>
                   <span className="syntax-punctuation">,</span>{"\n"}
                   <span className="syntax-property ml-4">&quot;available&quot;</span>
                   <span className="syntax-punctuation">: </span>
-                  <span className="syntax-value">{personalInfo.available ? "true" : "false"}</span>{"\n"}
+                  <span className="syntax-value">{personalInfo.available ? "true" : "false"}</span>{"\n"} */}
                   <span className="syntax-punctuation">{"}"}</span>
                 </pre>
               </div>
 
-              <div className="pt-4">
-                <span className="text-code-green">$</span>
-                <TypeWriter
-                  text=" I build intuitive interfaces and leverage AI tools to enhance developer workflows"
-                  speed={30}
-                  className="ml-2 text-text-primary"
-                  onComplete={() => setHeroComplete(true)}
-                />
+              <div className="hero-item pt-4 flex flex-wrap gap-4">
+                <a
+                  href="/Resume Sutep Jantawee.pdf"
+                  download="Resume_Sutep_Jantawee.pdf"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-purple/10 border border-syntax-purple text-syntax-purple rounded font-mono text-sm hover:bg-syntax-purple hover:text-terminal-black transition-all"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Resume
+                </a>
+                <a
+                  href="#projects"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-code-green/10 border border-code-green text-code-green rounded font-mono text-sm hover:bg-code-green hover:text-terminal-black transition-all"
+                >
+                  <FolderGit2 className="w-4 h-4" />
+                  View Projects
+                </a>
+                <a
+                  href="#contact"
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-blue/10 border border-syntax-blue text-syntax-blue rounded font-mono text-sm hover:bg-syntax-blue hover:text-terminal-black transition-all"
+                >
+                  <Mail className="w-4 h-4" />
+                  Contact Me
+                </a>
               </div>
-
-              {heroComplete && (
-                <div className="pt-4 animate-fade-in-up flex flex-wrap gap-4">
-                  <a
-                    href="#projects"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-code-green/10 border border-code-green text-code-green rounded font-mono text-sm hover:bg-code-green hover:text-terminal-black transition-all"
-                  >
-                    <FolderGit2 className="w-4 h-4" />
-                    View Projects
-                  </a>
-                  <a
-                    href="#contact"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-blue/10 border border-syntax-blue text-syntax-blue rounded font-mono text-sm hover:bg-syntax-blue hover:text-terminal-black transition-all"
-                  >
-                    <Mail className="w-4 h-4" />
-                    Contact Me
-                  </a>
-                </div>
-              )}
             </div>
           </TerminalWindow>
+
+          {/* Scroll indicator */}
+          <div className="flex justify-center mt-16">
+            <div className="flex flex-col items-center gap-2 text-[#8b949e] animate-bounce cursor-pointer"
+              onClick={() => {
+                window.scrollTo({
+                  top: document.getElementById('about')?.offsetTop,
+                  behavior: 'smooth'
+                })
+              }}
+            >
+              <span className="text-xs font-mono">Scroll</span>
+              <svg
+                width="30"
+                height="30"
+                viewBox="0 0 20 20"
+                fill="none"
+                className="text-[#00ff9f]"
+              >
+                <path
+                  d="M10 4V16M10 16L4 10M10 16L16 10"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 px-4">
+      <AnimatedSection id="about" className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="section-comment mb-8">about.json</div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="terminal-window">
+            <div className="terminal-window about-terminal">
               <div className="terminal-header">
                 <div className="terminal-dot terminal-dot-red" />
                 <div className="terminal-dot terminal-dot-yellow" />
@@ -844,35 +1731,13 @@ export default function Portfolio() {
               </div>
             </div>
 
-            <div className="space-y-6">
-              <p className="text-text-secondary leading-relaxed">
-                I&apos;m a passionate Full Stack Developer with 3+ years of experience building
-                web applications. I specialize in creating intuitive interfaces and robust
-                backend systems using modern technologies.
-              </p>
-              <p className="text-text-secondary leading-relaxed">
-                Currently exploring the intersection of AI and web development, leveraging
-                tools like Google Gemini API, Claude Code, and other AI assistants to
-                enhance developer productivity and create innovative solutions.
-              </p>
-
-              <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="p-4 bg-editor-dark rounded-lg border border-editor-border">
-                  <div className="text-3xl font-bold text-code-green">3+</div>
-                  <div className="text-sm text-comment-gray">Years Experience</div>
-                </div>
-                <div className="p-4 bg-editor-dark rounded-lg border border-editor-border">
-                  <div className="text-3xl font-bold text-syntax-blue">10+</div>
-                  <div className="text-sm text-comment-gray">Projects Completed</div>
-                </div>
-              </div>
-            </div>
+            <AboutContent />
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 px-4 bg-editor-dark/30">
+      <AnimatedSection id="skills" className="py-20 px-4 bg-editor-dark/30">
         <div className="max-w-6xl mx-auto">
           <div className="section-comment mb-8">npm install skills</div>
 
@@ -884,22 +1749,7 @@ export default function Portfolio() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {skillCategories.map((category, catIndex) => (
-                <div key={catIndex} className="space-y-4">
-                  <div className="flex items-center gap-2 text-syntax-blue font-mono text-sm">
-                    {category.icon}
-                    <span>{category.name}</span>
-                  </div>
-                  <div className="space-y-3">
-                    {category.skills.map((skill, skillIndex) => (
-                      <ProgressBar
-                        key={skillIndex}
-                        label={skill.name}
-                        progress={skill.level}
-                        delay={catIndex * 200 + skillIndex * 100}
-                      />
-                    ))}
-                  </div>
-                </div>
+                <SkillCategoryCard key={catIndex} category={category} index={catIndex} />
               ))}
             </div>
 
@@ -907,47 +1757,41 @@ export default function Portfolio() {
               <div className="text-code-green">
                 added {skillCategories.reduce((acc, cat) => acc + cat.skills.length, 0)} packages
               </div>
-              <div className="text-comment-gray text-sm">
-                found 0 vulnerabilities
-              </div>
             </div>
           </TerminalWindow>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Experience Section */}
-      <section id="experience" className="py-20 px-4">
+      <AnimatedSection id="experience" className="py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="section-comment mb-8">git log --oneline experience</div>
           <GitTimeline experiences={experiences} />
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Projects Section */}
-      <section id="projects" className="py-20 px-4 bg-editor-dark/30">
-        <div className="max-w-6xl mx-auto">
+      <AnimatedSection id="projects" className="py-20 px-4 bg-editor-dark/30">
+        <div className="max-w-7xl mx-auto">
           <div className="section-comment mb-8">ls -la projects/</div>
 
           <div className="mb-8">
             <TerminalWindow title="terminal">
-              <div className="text-code-green">$ ls -la projects/</div>
-              <div className="text-comment-gray mt-2">
-                total {projects.length} | {projects.filter(p => p.featured).length} featured
+              <div className="text-code-green">$ ls -la ~/projects</div>
+              <div className="text-comment-gray mt-2 font-mono text-sm">
+                <span className="text-syntax-blue">personal/</span> ({personalProjects.length} projects) |
+                <span className="text-syntax-purple ml-2">work/</span> ({workProjects.length} projects)
               </div>
             </TerminalWindow>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {projects.map((project, index) => (
-              <ProjectCard key={index} project={project} />
-            ))}
-          </div>
+          <ProjectsSection />
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 px-4">
-        <div className="max-w-4xl mx-auto">
+      <AnimatedSection id="contact" className="py-20 px-4">
+        <div className="max-w-5xl mx-auto">
           <div className="section-comment mb-8">POST /api/contact</div>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -1007,19 +1851,11 @@ export default function Portfolio() {
                 </div>
               </div>
 
-              <div className="p-4 bg-editor-dark rounded-lg border border-code-green/30">
-                <div className="flex items-center gap-2 text-code-green font-mono text-sm mb-2">
-                  <span className="w-2 h-2 rounded-full bg-code-green animate-pulse" />
-                  Available for opportunities
-                </div>
-                <p className="text-comment-gray text-sm">
-                  I&apos;m currently open to new opportunities as a Front-End, Back-End, or Full Stack Developer.
-                </p>
-              </div>
+              <ContactAvailability />
             </div>
           </div>
         </div>
-      </section>
+      </AnimatedSection>
 
       {/* Footer spacing for status bar */}
       <div className="h-8" />
