@@ -32,6 +32,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Image from 'next/image'
 import { personalProjects, workProjects, type PersonalProject, type WorkProject } from './DATAprojectSection'
 import Stack from '@/components/Stack'
+import LaserFlow from '@/components/LaserFlow'
+import CardSwap, { Card } from '@/components/CardSwap'
 
 // Register GSAP plugins
 if (typeof window !== 'undefined') {
@@ -1812,71 +1814,143 @@ export default function Portfolio() {
       <Navigation />
 
       {/* Hero Section */}
-      <section className="min-h-screen flex items-center justify-center px-4 grid-pattern overflow-hidden">
-        <div ref={heroRef} className="max-w-4xl w-full">
+      <section className="min-h-screen flex items-center justify-center px-4 grid-pattern overflow-hidden relative">
+        {/* LaserFlow Background */}
+        <div className="absolute inset-0 z-0 opacity-70">
+          <LaserFlow
+            color="#00ff9f"
+            wispDensity={0.6}
+            fogIntensity={0.85}
+            fogScale={0.25}
+            wispIntensity={3.0}
+            wispSpeed={12.0}
+            flowSpeed={0.45}
+            flowStrength={0.25}
+            verticalSizing={2.5}
+            horizontalSizing={0.4}
+            decay={1.0}
+            falloffStart={1.0}
+            mouseTiltStrength={0}
+            horizontalBeamOffset={0.0}
+            verticalBeamOffset={0.16}
+          />
+        </div>
+        <div ref={heroRef} className="max-w-[950px] w-full relative z-10 mt-40">
           <TerminalWindow title="portfolio.dev - zsh" animate={true} className="hero-terminal">
-            <div ref={heroContentRef} className="space-y-4">
+            <div ref={heroContentRef} className="flex flex-col lg:flex-row gap-6 relative sm:min-h-[390px] min-h-[310px]">
+              {/* Left Content */}
+              <div className="space-y-4 flex-1">
+                <div className="hero-item">
+                  <span className="text-code-green">$</span>
+                  <span className="ml-2 text-text-primary">cat about.json</span>
+                </div>
 
-              <div className="hero-item">
-                <span className="text-code-green">$</span>
-                <span className="ml-2 text-text-primary">cat about.json</span>
+                <div className="hero-item pl-4 border-l-2 border-editor-border">
+                  <pre className="sm:text-lg text-sm">
+                    <span className="syntax-punctuation">{"{"}</span>{"\n"}
+                    <span className="syntax-property ml-4">&quot;name&quot;</span>
+                    <span className="syntax-punctuation">: </span>
+                    <span className="syntax-string">&quot;{personalInfo.name}&quot;</span>
+                    <span className="syntax-punctuation">,</span>{"\n"}
+                    <span className="syntax-property ml-4">&quot;role&quot;</span>
+                    <span className="syntax-punctuation">: </span>
+                    <span className="syntax-string">&quot;{personalInfo.role}&quot;</span>
+                    <span className="syntax-punctuation">,</span>{"\n"}
+                    <span className="syntax-property ml-4">&quot;experience&quot;</span>
+                    <span className="syntax-punctuation">: </span>
+                    <span className="syntax-string">&quot;{personalInfo.experience}&quot;</span>
+                    <span className="syntax-punctuation">,</span>{"\n"}
+                    <span className="syntax-punctuation">{"}"}</span>
+                  </pre>
+                </div>
+
+                <div className="hero-item pt-4 gap-4 space-y-5">
+                  <div>
+                    <a
+                      href="/Resume Sutep Jantawee.pdf"
+                      download="Resume_Sutep_Jantawee.pdf"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-purple/10 border border-syntax-purple text-syntax-purple rounded font-mono text-sm hover:bg-syntax-purple hover:text-terminal-black transition-all"
+                    >
+                      <Download className="w-4 h-4" />
+                      Download Resume
+                    </a>
+                  </div>
+                  <div>
+                    <a
+                      href="#projects"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-code-green/10 border border-code-green text-code-green rounded font-mono text-sm hover:bg-code-green hover:text-terminal-black transition-all"
+                    >
+                      <FolderGit2 className="w-4 h-4" />
+                      View Projects
+                    </a>
+                  </div>
+                  <div>
+                    <a
+                      href="#contact"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-blue/10 border border-syntax-blue text-syntax-blue rounded font-mono text-sm hover:bg-syntax-blue hover:text-terminal-black transition-all"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Contact Me
+                    </a>
+                  </div>
+                </div>
               </div>
 
-              <div className="hero-item pl-4 border-l-2 border-editor-border">
-                <pre className="text-lg">
-                  <span className="syntax-punctuation">{"{"}</span>{"\n"}
-                  <span className="syntax-property ml-4">&quot;name&quot;</span>
-                  <span className="syntax-punctuation">: </span>
-                  <span className="syntax-string">&quot;{personalInfo.name}&quot;</span>
-                  <span className="syntax-punctuation">,</span>{"\n"}
-                  <span className="syntax-property ml-4">&quot;role&quot;</span>
-                  <span className="syntax-punctuation">: </span>
-                  <span className="syntax-string">&quot;{personalInfo.role}&quot;</span>
-                  <span className="syntax-punctuation">,</span>{"\n"}
-                  <span className="syntax-property ml-4">&quot;experience&quot;</span>
-                  <span className="syntax-punctuation">: </span>
-                  <span className="syntax-string">&quot;{personalInfo.experience}&quot;</span>
-                  <span className="syntax-punctuation">,</span>{"\n"}
-                  {/* <span className="syntax-property ml-4">&quot;location&quot;</span>
-                  <span className="syntax-punctuation">: </span>
-                  <span className="syntax-string">&quot;{personalInfo.location}&quot;</span>
-                  <span className="syntax-punctuation">,</span>{"\n"}
-                  <span className="syntax-property ml-4">&quot;available&quot;</span>
-                  <span className="syntax-punctuation">: </span>
-                  <span className="syntax-value">{personalInfo.available ? "true" : "false"}</span>{"\n"} */}
-                  <span className="syntax-punctuation">{"}"}</span>
-                </pre>
-              </div>
-
-              <div className="hero-item pt-4 flex flex-wrap gap-4">
-                <a
-                  href="/Resume Sutep Jantawee.pdf"
-                  download="Resume_Sutep_Jantawee.pdf"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-purple/10 border border-syntax-purple text-syntax-purple rounded font-mono text-sm hover:bg-syntax-purple hover:text-terminal-black transition-all"
+              {/* Right - Card Swap */}
+              <div className="hidden lg:block relative w-auto h-[330px] mr-30">
+                <CardSwap
+                  width={350}
+                  height={250}
+                  cardDistance={40}
+                  verticalDistance={50}
+                  delay={4000}
+                  pauseOnHover={true}
+                  skewAmount={4}
+                  easing="elastic"
                 >
-                  <Download className="w-4 h-4" />
-                  Download Resume
-                </a>
-                <a
-                  href="#projects"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-code-green/10 border border-code-green text-code-green rounded font-mono text-sm hover:bg-code-green hover:text-terminal-black transition-all"
-                >
-                  <FolderGit2 className="w-4 h-4" />
-                  View Projects
-                </a>
-                <a
-                  href="#contact"
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-syntax-blue/10 border border-syntax-blue text-syntax-blue rounded font-mono text-sm hover:bg-syntax-blue hover:text-terminal-black transition-all"
-                >
-                  <Mail className="w-4 h-4" />
-                  Contact Me
-                </a>
+                  <Card className="overflow-hidden border-code-green/30">
+                    <Image
+                      src="/image1.jpg"
+                      alt="Profile"
+                      fill
+                      className="object-cover"
+                      sizes="200px"
+                    />
+                  </Card>
+                  <Card className="overflow-hidden border-syntax-blue/30">
+                    <Image
+                      src="/project/Portfolio Programmer Space.png"
+                      alt="Portfolio Project"
+                      fill
+                      className="object-cover"
+                      sizes="200px"
+                    />
+                  </Card>
+                  <Card className="overflow-hidden border-syntax-purple/30">
+                    <Image
+                      src="/project/CryptoSentiment1.png"
+                      alt="Crypto Sentiment"
+                      fill
+                      className="object-cover"
+                      sizes="200px"
+                    />
+                  </Card>
+                  <Card className="overflow-hidden border-syntax-orange/30">
+                    <Image
+                      src="/project/JobMatching1.png"
+                      alt="Job Matching"
+                      fill
+                      className="object-cover"
+                      sizes="200px"
+                    />
+                  </Card>
+                </CardSwap>
               </div>
             </div>
           </TerminalWindow>
 
           {/* Scroll indicator */}
-          <div className="flex justify-center mt-16">
+          <div className="flex justify-center mt-6">
             <div className="flex flex-col items-center gap-2 text-[#8b949e] animate-bounce cursor-pointer"
               onClick={() => {
                 window.scrollTo({
