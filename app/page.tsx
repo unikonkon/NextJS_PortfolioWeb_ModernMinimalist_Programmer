@@ -23,7 +23,8 @@ import {
   Sparkles,
   Download,
   X,
-  ZoomIn
+  ZoomIn,
+  Menu
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import gsap from 'gsap'
@@ -1233,6 +1234,8 @@ function StatusBar() {
 
 function Navigation() {
   const [activeSection, setActiveSection] = useState("about")
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -1252,15 +1255,64 @@ function Navigation() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
+        setIsMobileMenuOpen(false)
+      }
+    }
+
+    if (isMobileMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [isMobileMenuOpen])
+
+  // GSAP animation for mobile menu
+  useEffect(() => {
+    if (!mobileMenuRef.current) return
+
+    if (isMobileMenuOpen) {
+      gsap.fromTo(mobileMenuRef.current,
+        { opacity: 0, y: -10, display: 'none' },
+        { opacity: 1, y: 0, display: 'block', duration: 0.3, ease: "power2.out" }
+      )
+    } else {
+      gsap.to(mobileMenuRef.current, {
+        opacity: 0,
+        y: -10,
+        duration: 0.2,
+        ease: "power2.in",
+        onComplete: () => {
+          if (mobileMenuRef.current) {
+            gsap.set(mobileMenuRef.current, { display: 'none' })
+          }
+        }
+      })
+    }
+  }, [isMobileMenuOpen])
+
+  const handleNavClick = (id: string) => {
+    setIsMobileMenuOpen(false)
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-terminal-black/95 backdrop-blur border-b border-editor-border">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-12">
+          {/* Logo */}
           <div className="flex items-center gap-2">
             <TerminalIcon className="w-5 h-5 text-code-green" />
             <span className="font-mono text-sm text-text-primary">suthep.dev</span>
           </div>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center">
             {navItems.map((item, index) => (
               <a
@@ -1278,12 +1330,99 @@ function Navigation() {
             ))}
           </div>
 
+          {/* Right side - Social links + Mobile menu button */}
           <div className="flex items-center gap-3">
-            <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" className="text-comment-gray hover:text-code-green transition-colors">
+            {/* Social links - hidden on mobile */}
+            <div className="hidden sm:flex items-center gap-3">
+              <a href={personalInfo.github} target="_blank" rel="noopener noreferrer" className="text-comment-gray hover:text-code-green transition-colors">
+                <Github className="w-5 h-5" />
+              </a>
+              <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-comment-gray hover:text-syntax-blue transition-colors">
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
+
+            {/* Mobile menu button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden p-2 text-comment-gray hover:text-code-green transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu Dropdown */}
+      <div
+        ref={mobileMenuRef}
+        className="md:hidden absolute top-12 left-0 right-0 bg-terminal-black/98 backdrop-blur-lg border-b border-editor-border"
+        style={{ display: 'none' }}
+      >
+        <div className="max-w-6xl mx-auto px-4 py-3">
+          {/* Navigation Items */}
+          <div className="space-y-1">
+            {navItems.map((item, index) => (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={cn(
+                  "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg font-mono text-sm transition-all",
+                  activeSection === item.id
+                    ? "bg-code-green/10 text-code-green border border-code-green/30"
+                    : "text-comment-gray hover:text-text-primary hover:bg-editor-border/30"
+                )}
+              >
+                <span className="text-syntax-purple">{`0${index + 1}`}</span>
+                <span className="flex items-center gap-2">
+                  {item.icon}
+                  {item.label}
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* Divider */}
+          <div className="my-3 border-t border-editor-border" />
+
+          {/* Social Links for mobile */}
+          <div className="flex items-center gap-4 px-3">
+            <a
+              href={personalInfo.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-comment-gray hover:text-code-green transition-colors"
+            >
               <Github className="w-5 h-5" />
+              <span className="font-mono text-sm">GitHub</span>
             </a>
-            <a href={personalInfo.linkedin} target="_blank" rel="noopener noreferrer" className="text-comment-gray hover:text-syntax-blue transition-colors">
+            <a
+              href={personalInfo.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-comment-gray hover:text-syntax-blue transition-colors"
+            >
               <Linkedin className="w-5 h-5" />
+              <span className="font-mono text-sm">LinkedIn</span>
+            </a>
+          </div>
+
+          {/* Contact info */}
+          <div className="mt-3 pt-3 border-t border-editor-border px-3 space-y-2">
+            <a
+              href={`mailto:${personalInfo.email}`}
+              className="flex items-center gap-2 text-comment-gray hover:text-syntax-yellow transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              <span className="font-mono text-xs">{personalInfo.email}</span>
+            </a>
+            <a
+              href={`tel:${personalInfo.phone}`}
+              className="flex items-center gap-2 text-comment-gray hover:text-syntax-yellow transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              <span className="font-mono text-xs">{personalInfo.phone}</span>
             </a>
           </div>
         </div>
@@ -1845,7 +1984,7 @@ export default function Portfolio() {
           <div className="section-comment mb-8">npm install skills</div>
 
           <TerminalWindow title="npm install">
-            <div className="space-y-2 mb-6">
+            <div className="space-y-1 mb-6">
               <div className="text-code-green">$ npm install @suthep/skills</div>
               <div className="text-comment-gray">Installing dependencies...</div>
             </div>
