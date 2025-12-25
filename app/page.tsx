@@ -163,6 +163,7 @@ const skillCategories: SkillCategory[] = [
       { name: "Slack", level: 80 },
       { name: "Lark", level: 80 },
       { name: "Monday", level: 70 },
+      { name: "stitch", level: 70 },
     ]
   },
   {
@@ -179,18 +180,18 @@ const skillCategories: SkillCategory[] = [
       { name: "lovable.dev", level: 70 },
     ]
   },
-  {
-    name: "Soft Skills",
-    icon: <span role="img" aria-label="Handshake">🤝</span>,
-    skills: [
-      { name: "Creativity", level: 90 },
-      { name: "Critical thinking", level: 85 },
-      { name: "Responsibility", level: 95 },
-      { name: "Problem solving", level: 90 },
-      { name: "Communication", level: 85 },
-      { name: "Teamwork", level: 90 },
-    ]
-  }
+  // {
+  //   name: "Soft Skills",
+  //   icon: <span role="img" aria-label="Handshake">🤝</span>,
+  //   skills: [
+  //     { name: "Creativity", level: 90 },
+  //     { name: "Critical thinking", level: 85 },
+  //     { name: "Responsibility", level: 95 },
+  //     { name: "Problem solving", level: 90 },
+  //     { name: "Communication", level: 85 },
+  //     { name: "Teamwork", level: 90 },
+  //   ]
+  // }
 ]
 
 const experiences: Experience[] = [
@@ -1213,18 +1214,18 @@ function StatusBar() {
   }, [])
 
   return (
-    <footer className="status-bar fixed bottom-0 left-0 right-0 z-50">
+    <footer className="status-bar">
       <div className="flex items-center gap-4">
         <span className="flex items-center gap-1">
-          <GitBranch className="w-3 h-3" />
+          <GitBranch className="sm:w-4 sm:h-4 w-3 h-3" />
           main
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-2 h-2 rounded-full bg-green-500" />
-          Designed by FaradayBanana.
+          <span className="sm:w-4 sm:h-4 w-3 h-3 rounded-full bg-green-500" />
+          FaradayBanana.
         </span>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center sm:gap-5 gap-3">
         <span>UTF-8</span>
         <span>LF</span>
         <span>Next.js</span>
@@ -1631,26 +1632,47 @@ function AboutContent() {
   }, [])
 
   return (
-    <div ref={contentRef} className="space-y-6">
-      <p className="text-text-secondary leading-relaxed">
-        I&apos;m a passionate Full Stack Developer with 3+ years of experience building
-        web applications. I specialize in creating intuitive interfaces and robust
-        backend systems using modern technologies.
-      </p>
-      <p className="text-text-secondary leading-relaxed">
-        Currently exploring the intersection of AI and web development, leveraging
-        tools like Google Gemini API, Claude Code, and other AI assistants to
-        enhance developer productivity and create innovative solutions.
+    <div ref={contentRef} className="space-y-4">
+      <div>
+        <span className="text-[#00ff9f]"># </span>
+        <span className="text-white font-bold text-lg">Hi, I&apos;m Suthep Jantawee</span>
+      </div>
+
+      <p className="text-gray-200 leading-relaxed">
+        I&apos;m a <span className="text-[#00d8ff] font-semibold">Full Stack Developer</span> with{' '}
+        <span className="text-[#21f36b] font-semibold">3+ years</span> of experience in web development.
+        I have a passion for designing intuitive user interfaces, building with modern frameworks,
+        and leveraging AI to supercharge developer workflows.
       </p>
 
-      <div ref={statsRef} className="grid grid-cols-2 gap-4 pt-4">
-        <div className="stat-card p-4 bg-editor-dark rounded-lg border border-editor-border" data-target="3">
-          <div className="stat-number text-3xl font-bold text-code-green">3+</div>
-          <div className="text-sm text-comment-gray">Years Experience</div>
+      <p className="text-gray-200 leading-relaxed">
+        I&apos;m currently looking for roles as a{' '}
+        <span className="text-[#ce6cff] font-semibold">Front-End Developer</span>,{' '}
+        <span className="text-[#ce6cff] font-semibold">Back-End Developer</span>, or{' '}
+        <span className="text-[#ce6cff] font-semibold">Full Stack Developer</span>.
+      </p>
+
+      <div className="pt-4 border-t border-[#ce6cff]/30">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[#00ff9f]">## </span>
+          <span className="text-white">Soft Skills</span>
         </div>
-        <div className="stat-card p-4 bg-editor-dark rounded-lg border border-editor-border" data-target="10">
-          <div className="stat-number text-3xl font-bold text-syntax-blue">10+</div>
-          <div className="text-sm text-comment-gray">Projects Completed</div>
+        <div className="flex flex-wrap gap-2">
+          {[
+            'Creativity',
+            'Critical thinking',
+            'Responsibility',
+            'Problem solving',
+            'Communication',
+            'Teamwork'
+          ].map((skill) => (
+            <span
+              key={skill}
+              className="px-3 py-1 text-sm font-mono rounded-lg bg-[#ce6cff]/10 text-[#ce6cff] border border-[#ce6cff]/30"
+            >
+              {skill}
+            </span>
+          ))}
         </div>
       </div>
     </div>
@@ -1778,6 +1800,45 @@ export default function Portfolio() {
   const heroRef = useRef<HTMLDivElement>(null)
   const heroContentRef = useRef<HTMLDivElement>(null)
 
+  // Typing animation states
+  const [typedCommand, setTypedCommand] = useState('')
+  const [showCursor, setShowCursor] = useState(true)
+  const [showOutput, setShowOutput] = useState(false)
+  const [showButtons, setShowButtons] = useState(false)
+  const command = 'cat about.json'
+
+  // Typing animation effect
+  useEffect(() => {
+    let charIndex = 0
+    const typingInterval = setInterval(() => {
+      if (charIndex < command.length) {
+        setTypedCommand(command.slice(0, charIndex + 1))
+        charIndex++
+      } else {
+        clearInterval(typingInterval)
+        // After typing is done, hide cursor and show output
+        setTimeout(() => {
+          setShowCursor(false)
+          setShowOutput(true)
+          // Show buttons after output appears
+          setTimeout(() => {
+            setShowButtons(true)
+          }, 600)
+        }, 300)
+      }
+    }, 80)
+
+    // Cursor blink effect
+    const cursorInterval = setInterval(() => {
+      setShowCursor(prev => !prev)
+    }, 530)
+
+    return () => {
+      clearInterval(typingInterval)
+      clearInterval(cursorInterval)
+    }
+  }, [])
+
   // Hero section animations
   useGSAP(() => {
     if (!heroContentRef.current) return
@@ -1899,52 +1960,89 @@ export default function Portfolio() {
               {/* Right - Card Swap */}
               <div className="hidden lg:block relative w-auto h-[310px] mr-30">
                 <CardSwap
-                  width={350}
-                  height={250}
-                  cardDistance={40}
-                  verticalDistance={50}
+                  width={320}
+                  height={220}
+                  cardDistance={45}
+                  verticalDistance={55}
                   delay={4000}
                   pauseOnHover={true}
-                  skewAmount={4}
+                  skewAmount={5}
                   easing="elastic"
                 >
-                  <Card className="overflow-hidden border-syntax-orange/30">
+                  {/* Card 1: Job Matching */}
+                  <Card className="bg-[#0d1117] border-2 border-white/20 rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-3 p-2">
+                      {/* Briefcase Icon */}
+                      <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="2" y="7" width="20" height="14" rx="2" />
+                        <path d="M16 7V5a4 4 0 0 0-8 0v2" />
+                      </svg>
+                      <span className="text-white text-lg font-medium">Job Matching</span>
+                    </div>
                     <Image
                       src="/project/JobMatching1.png"
                       alt="Job Matching"
-                      fill
-                      className="object-cover"
-                      sizes="200px"
+                      className="object-cover w-full h-[190px]"
+                      width={320}
+                      height={190}
                     />
                   </Card>
-                  <Card className="overflow-hidden border-code-green/30">
-                    <Image
-                      src="/image1.jpg"
-                      alt="Profile"
-                      fill
-                      className="object-cover"
-                      sizes="200px"
-                    />
+                  {/* Card 2: Profile / About Me */}
+                  <Card className="bg-[#0d1117] border-2 border-white/20 rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-3 p-2">
+                      {/* User Icon */}
+                      <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M2 20c0-4 8-6 10-6s10 2 10 6" />
+                      </svg>
+                      <span className="text-white text-lg font-medium">About Me</span>
+                    </div>
+                    <div className="w-full h-[190px] overflow-hidden">
+                      <Image
+                        src="/image1.jpg"
+                        alt="Profile"
+                        className="object-cover w-full h-full"
+                        width={320}
+                        height={190}
+                      />
+                    </div>
                   </Card>
-                  <Card className="overflow-hidden border-syntax-blue/30">
+                  {/* Card 3: Portfolio */}
+                  <Card className="bg-[#0d1117] border-2 border-white/20 rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-3 p-2">
+                      {/* Code Icon */}
+                      <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="16 18 22 12 16 6" />
+                        <polyline points="8 6 2 12 8 18" />
+                      </svg>
+                      <span className="text-white text-lg font-medium">Portfolio</span>
+                    </div>
                     <Image
                       src="/project/Portfolio Programmer Space.png"
-                      alt="Portfolio Project"
-                      fill
-                      className="object-cover"
-                      sizes="200px"
+                      alt="Portfolio Programmer Space"
+                      className="object-cover w-full h-[190px]"
+                      width={320}
+                      height={190}
                     />
                   </Card>
-                  <Card className="overflow-hidden border-syntax-purple/30">
+                  {/* Card 4: Crypto Sentiment */}
+                  <Card className="bg-[#0d1117] border-2 border-white/20 rounded-2xl overflow-hidden">
+                    <div className="flex items-center gap-3 p-2">
+                      {/* Cryptocurrency Icon */}
+                      <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M7 10h8M7 14h8M10 7v10M14 7v10" />
+                      </svg>
+                      <span className="text-white text-lg font-medium">Crypto Sentiment</span>
+                    </div>
                     <Image
                       src="/project/CryptoSentiment1.png"
                       alt="Crypto Sentiment"
-                      fill
-                      className="object-cover"
-                      sizes="200px"
+                      className="object-cover w-full h-[190px]"
+                      width={320}
+                      height={190}
                     />
                   </Card>
-
                 </CardSwap>
               </div>
             </div>
@@ -1986,8 +2084,8 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <div className="section-comment mb-8">about.json</div>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            <div className="terminal-window about-terminal">
+          <div className="grid md:grid-cols-2 gap-10">
+            <div className="terminal-window about-terminal ">
               <div className="terminal-header">
                 <div className="terminal-dot terminal-dot-red" />
                 <div className="terminal-dot terminal-dot-yellow" />
@@ -2028,11 +2126,11 @@ export default function Portfolio() {
                   <span className="syntax-punctuation">,</span>
                 </CodeLine>
                 <CodeLine lineNum={7} indent={2}>
-                  <span className="syntax-string">&quot;Backend APIs&quot;</span>
+                  <span className="syntax-string">&quot;Back-End Developer&quot;</span>
                   <span className="syntax-punctuation">,</span>
                 </CodeLine>
                 <CodeLine lineNum={8} indent={2}>
-                  <span className="syntax-string">&quot;AI Integration&quot;</span>
+                  <span className="syntax-string">&quot;Full Stack Developer&quot;</span>
                 </CodeLine>
                 <CodeLine lineNum={9} indent={1}>
                   <span className="syntax-punctuation">],</span>
@@ -2107,7 +2205,7 @@ export default function Portfolio() {
       </AnimatedSection>
 
       {/* Contact Section */}
-      <AnimatedSection id="contact" className="py-20 px-4">
+      <AnimatedSection id="contact" className="py-10 px-4">
         <div className="max-w-5xl mx-auto">
           <div className="section-comment mb-8">POST /api/contact</div>
 
